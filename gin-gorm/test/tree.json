@@ -1,0 +1,19 @@
+{
+  "dirname": "src",
+  "subdirs": [
+    { "dirname": "api" },
+    { "dirname": "cmd" },
+    { "dirname": "conf" },
+    { "dirname": "dao" },
+    { "dirname": "controller" },
+    { "dirname": "log" },
+    { "dirname": "middleware" },
+    { "dirname": "model" },
+    { "dirname": "router" },
+    {
+      "dirname": "service",
+      "subdirs": [{ "dirname": "dto" }]
+    },
+    { "dirname": "utils" }
+  ]
+}
