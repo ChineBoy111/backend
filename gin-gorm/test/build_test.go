@@ -2,10 +2,9 @@ package test
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/fs"
+	// "io/fs"
+	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -18,9 +17,9 @@ import (
 /////////////////////////////////////////
 
 func TestClean(t *testing.T) {
-	cmd := exec.Command("rm", "-rf", "../src")
-	cmd.Run()
-	fmt.Println("Done!")
+	// cmd := exec.Command("rm", "-rf", "../src")
+	// cmd.Run()
+	log.Println("Done!")
 }
 
 var rootDir string
@@ -31,11 +30,11 @@ func mkdir(dirname string) {
 	if dirname == "" {
 		return
 	}
-	fmt.Println(dirname)
-	err := os.MkdirAll(rootDir+sep+dirname, fs.ModePerm /* 0777 */)
-	if err != nil {
-		panic(err.Error())
-	}
+	log.Println(dirname)
+	// err := os.MkdirAll(rootDir+sep+dirname, fs.ModePerm /* 0777 */)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
 }
 
 //////////////////////////////////////////////
@@ -47,7 +46,8 @@ func mkdir(dirname string) {
 func loadJson(jsonMap *map[string]any) { // load a json file to a map
 	currDir, _ := os.Getwd()
 	rootDir = currDir[0:strings.LastIndex(currDir, sep)]
-	fmt.Printf("currDir = %s\nrootDir = %s\n", currDir, rootDir)
+	log.Printf("currDir = %s\n", currDir)
+	log.Printf("rootDir = %s\n", rootDir)
 	jsonBytes, _ := os.ReadFile(currDir + sep + jsonFname)
 	err := json.Unmarshal(jsonBytes, jsonMap)
 	if err != nil {
@@ -65,9 +65,8 @@ func parseMap(jsonMap *map[string]any, prefix string) {
 				if dirname == "" {
 					continue
 				}
-
 				if prefix != "" {
-					dirname = prefix + sep + dirname					
+					dirname = prefix + sep + dirname
 				}
 				prefix = dirname
 				mkdir(dirname)
@@ -85,13 +84,13 @@ func parseArr(jsonArr []any, prefix string) {
 	}
 }
 
-//! go test -run TestBuildByMap
+// ! go test -run TestBuildByMap
 func TestBuildByMap(t *testing.T) {
 	rootDir = ""
 	var jsonMap map[string]any
 	loadJson(&jsonMap)
 	parseMap(&jsonMap, "")
-	fmt.Println("Done!")
+	log.Println("Done!")
 }
 
 //////////////////////////////////////////////////
@@ -101,14 +100,15 @@ func TestBuildByMap(t *testing.T) {
 //////////////////////////////////////////////////
 
 type DirNode struct {
-	DirName string `json:"dirname"`
+	DirName  string    `json:"dirname"`
 	SubNodes []DirNode `json:"subdirs"`
 }
 
 func (dirNode *DirNode) loadJson() {
 	currDir, _ := os.Getwd()
 	rootDir = currDir[0:strings.LastIndex(currDir, sep)]
-	fmt.Printf("currDir = %s\nrootDir = %s\n", currDir, rootDir)
+	log.Printf("currDir = %s\n", currDir)
+	log.Printf("rootDir = %s\n", rootDir)
 	jsonBytes, _ := os.ReadFile(currDir + sep + jsonFname)
 	err := json.Unmarshal(jsonBytes, dirNode)
 	if err != nil {
@@ -132,11 +132,11 @@ func (dirNode *DirNode) parseNode(prefix string) {
 	}
 }
 
-//! go test -run TestBuildByDirNode
+// ! go test -run TestBuildByDirNode
 func TestBuildByDirNode(t *testing.T) {
 	rootDir = ""
 	var dirNode DirNode
 	dirNode.loadJson()
 	dirNode.parseNode("")
-	fmt.Println("Done!")
+	log.Println("Done!")
 }
