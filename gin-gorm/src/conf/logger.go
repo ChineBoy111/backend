@@ -35,12 +35,12 @@ func getEncoder() zapcore.Encoder {
 func getWriterSyncer() zapcore.WriteSyncer {
 	sep := string(filepath.Separator)
 	rootDir, _ := os.Getwd()
-	//logDir := fmt.Sprintf("./src/log/%s.log", time.Now().Format(time.DateOnly))
-	logFile := rootDir + sep + "src" + sep + "log" + sep + time.Now().Format(time.DateOnly) + ".log"
+	// logFile := fmt.Sprintf("./log/%s.log", time.Now().Format(time.DateOnly))
+	logFile := rootDir + sep + "log" + sep + time.Now().Format(time.DateOnly) + ".log"
 	log.Printf("logFile = %s\n", logFile)
 	//! O_CREATE 如果文件不存在，则创建文件
 	//! O_RDONLY 只读 | O_WRONLY 只写 | O_RDWR 读写
 	//! O_APPEND 追加 | O_TRUNC 重写
 	fp, _ := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0755)
-	return zapcore.AddSync(fp)
+	return zapcore.AddSync(fp /* fp 实现了 io.Writer 接口 */)
 }

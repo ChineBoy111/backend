@@ -6,7 +6,6 @@
     { "dirname": "conf" },
     { "dirname": "data" },
     { "dirname": "global" },
-    { "dirname": "log" },
     { "dirname": "middleware" },
     { "dirname": "model" },
     { "dirname": "router" },

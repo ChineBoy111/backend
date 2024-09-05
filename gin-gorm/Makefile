@@ -15,6 +15,7 @@ get:
 	go get -u github.com/swaggo/files
 	go get -u go.uber.org/zap
 	@echo "==================== install -o $GOBIN/swag ===================="
+	echo "export GOBIN='$HOME/bin'"
 	go install github.com/swaggo/swag/cmd/swag@latest
 
 tidy:
@@ -24,7 +25,7 @@ build:
 	go build -o ./main ./src/main.go
 
 clean:
-	rm -rf ./build
+	rm -rf ./main ./log/*
 
 test:
 	cd ./test && \
@@ -33,5 +34,4 @@ test:
 	@echo "Test Done!"
 
 swag:
-	swag -v
 	cd ./src && swag init # 将在 src 目录下创建 docs 目录

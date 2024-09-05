@@ -3,4 +3,5 @@
 .DS_Store
 go.sum
 *.exe
-/src/main
+main
+log
