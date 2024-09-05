@@ -2,6 +2,7 @@ package router
 
 import (
 	_ "bronya.com/gin-gorm/src/docs" //* 集成 swagger http://127.0.0.1:8888/swagger/index.html
+	"bronya.com/gin-gorm/src/global"
 	"context"
 	"errors"
 	"fmt"
@@ -57,9 +58,11 @@ func StartRouter() {
 	//! 在新协程中启动服务器，主协程不会阻塞，继续运行
 	go func() {
 		log.Printf("Serving on http://127.0.0.1:%s\n", port)
+		global.Logger.Infof("Serving on http://127.0.0.1:%s\n", port)
 		//! 不建议使用 err != http.ErrServerClosed
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Printf("Serve error %s\n", err.Error())
+			log.Printf("Serve err %s\n", err.Error())
+			global.Logger.Errorf("Serve err %s\n", err.Error())
 			return
 		}
 	}()
@@ -73,10 +76,12 @@ func StartRouter() {
 
 	if err := server.Shutdown(timoutCtx); /* server.Shutdown(timeoutCtx) 会执行 <-timoutCtx.Done() */
 	err != nil {
-		log.Printf("Shutdown error %s\n", err.Error())
+		log.Printf("Shutdown err %s\n", err.Error())
+		global.Logger.Errorf("Shutdown err %s\n", err.Error())
 	}
 	// <-timoutCtx.Done()
 	log.Println("Shutdown ok")
+	global.Logger.Infoln("Shutdown ok")
 }
 
 // Appender 添加未注册的路由

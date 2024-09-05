@@ -28,7 +28,7 @@ func mkdir(dirname string) {
 	if dirname == "" {
 		return
 	}
-	log.Println(dirname)
+	log.Printf("dirname = %s\n", dirname)
 	// err := os.MkdirAll(rootDir+sep+dirname, fs.ModePerm /* 0777 */)
 	// if err != nil {
 	// 	panic(err.Error())

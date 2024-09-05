@@ -50,7 +50,7 @@ import (
 	"os"
 	"syscall"
 )
-//! O_CREAT 文件不存在则创建文件
+//! O_CREAT 如果文件不存在，则创建文件
 //! O_RDONLY 只读、O_WRONLY 只写、O_TRUNC 重写
 fd_ /* int */, _ := syscall.Open("../../README.txt", os.O_WRONLY | os.O_CREATE | os.O_TRUNC, 0755);
 var fd uintptr = uintptr(fd_)

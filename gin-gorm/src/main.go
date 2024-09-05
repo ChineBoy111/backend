@@ -7,7 +7,7 @@ import (
 	"syscall"
 )
 
-func unusedMain1() {
+func unused() {
 	defer cmd.Done()
 
 	//! 在新协程中启动服务器，主协程不会阻塞，继续运行
