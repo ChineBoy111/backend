@@ -1,21 +1,24 @@
 package conf
 
 import (
-	"github.com/spf13/viper"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"log"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func NewLogger() *zap.SugaredLogger {
 	logLevel := zap.DebugLevel
-	if viper.GetString("build.type") == "Release" {
+	if viper.GetString("buildType") == "Release" {
 		logLevel = zap.InfoLevel
 	}
-	core := zapcore.NewCore(getEncoder(), getWriterSyncer(), logLevel)
+
+	stdoutSync := zapcore.AddSync(os.Stdout)
+	core := zapcore.NewCore(getEncoder(), zapcore.NewMultiWriteSyncer(getWriterSyncer(), stdoutSync), logLevel)
 
 	logger := zap.New(core).Sugar()
 	logger.Infoln("========== Blazing fast, structured, leveled logging in Go. ==========")
@@ -39,8 +42,11 @@ func getWriterSyncer() zapcore.WriteSyncer {
 	logFile := rootDir + sep + "log" + sep + time.Now().Format(time.DateOnly) + ".log"
 	log.Printf("logFile = %s\n", logFile)
 	//! O_CREATE 如果文件不存在，则创建文件
-	//! O_RDONLY 只读 | O_WRONLY 只写 | O_RDWR 读写
-	//! O_APPEND 追加 | O_TRUNC 重写
+	//! O_RDONLY 只读
+	//! O_WRONLY 只写
+	//! O_RDWR 读写
+	//! O_APPEND 追加
+	//! O_TRUNC 重写
 	fp, _ := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0755)
 	return zapcore.AddSync(fp /* fp 实现了 io.Writer 接口 */)
 }

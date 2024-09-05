@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"log"
 	"net/http"
 	"os/signal"
 	"syscall"
@@ -57,12 +56,10 @@ func StartRouter() {
 
 	//! 在新协程中启动服务器，主协程不会阻塞，继续运行
 	go func() {
-		log.Printf("Serving on http://127.0.0.1:%s", port)
 		global.Logger.Infof("Serving on http://127.0.0.1:%s", port)
 		//! 不建议使用 err != http.ErrServerClosed
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Printf("Serve err %s\n", err.Error())
-			global.Logger.Errorf("Serve err %s", err.Error())
+			global.Logger.Errorf("Serve error %s", err.Error())
 			return
 		}
 	}()
@@ -76,11 +73,9 @@ func StartRouter() {
 
 	if err := server.Shutdown(timoutCtx); /* server.Shutdown(timeoutCtx) 会执行 <-timoutCtx.Done() */
 	err != nil {
-		log.Printf("Shutdown err %s", err.Error())
-		global.Logger.Errorf("Shutdown err %s", err.Error())
+		global.Logger.Errorf("Shutdown error %s", err.Error())
 	}
 	// <-timoutCtx.Done()
-	log.Println("Shutdown ok")
 	global.Logger.Infoln("Shutdown ok")
 }
 
