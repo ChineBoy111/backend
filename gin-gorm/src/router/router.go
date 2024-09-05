@@ -1,11 +1,14 @@
 package router
 
 import (
+	_ "bronya.com/gin-gorm/src/docs" //* 集成 swagger http://127.0.0.1:8888/swagger/index.html
 	"context"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"net/http"
 	"os/signal"
@@ -14,7 +17,7 @@ import (
 )
 
 // IRoutesRegFunc 用于注册路由的函数
-type IRoutesRegFunc = func(publicRouteGroup, authenRouteGroup *gin.RouterGroup)
+type IRoutesRegFunc = func(pubRouteGroup, authRouteGroup *gin.RouterGroup)
 
 var routersRegFuncArr []IRoutesRegFunc
 
@@ -27,18 +30,21 @@ func StartRouter() {
 	defer notifyCancel()
 
 	engine := gin.Default()
-	publicRouteGroup := engine.Group("/api/v1/public")
-	authenRouteGroup := engine.Group("/api/v1")
+	pubRouteGroup := engine.Group("/api/v1/public")
+	authRouteGroup := engine.Group("/api/v1")
 
 	//* 添加未注册的路由
 	AppendUserRoutes()
 
 	for _, routersRegFunc := range routersRegFuncArr {
 		//* 注册路由
-		routersRegFunc(publicRouteGroup, authenRouteGroup) // init
+		routersRegFunc(pubRouteGroup, authRouteGroup) // init
 	}
 
-	port := viper.GetString("server.port")
+	//* 集成 swagger http://127.0.0.1:8888/swagger/index.html
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	port := viper.GetString("server.port") // 8888
 	if port == "" {
 		port = "8080"
 	}
@@ -50,7 +56,7 @@ func StartRouter() {
 
 	//! 在新协程中启动服务器，主协程不会阻塞，继续运行
 	go func() {
-		log.Printf("Serving on port %s\n", port)
+		log.Printf("Serving on http://127.0.0.1:%s\n", port)
 		//! 不建议使用 err != http.ErrServerClosed
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Printf("Serve error %s\n", err.Error())

@@ -1,0 +1,53 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "bronya.com/gin-gorm",
+        "title": "gin-gorm",
+        "contact": {},
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/api/v1/public/user/login": {
+            "post": {
+                "description": "用户登录，详细",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "用户登录，简略",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "登录成功",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "登录失败",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

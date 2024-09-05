@@ -1,11 +1,10 @@
 package main
 
 import (
+	"bronya.com/gin-gorm/src/cmd"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"bronya.com/gin-gorm/src/cmd"
 )
 
 func unusedMain1() {

@@ -10,17 +10,18 @@ get:
 	go get github.com/spf13/viper
 	go get -u github.com/gin-gonic/gin
 	go get -u github.com/swaggo/swag/cmd/swag
+	go install github.com/swaggo/swag/cmd/swag@latest
 	go get -u github.com/swaggo/gin-swagger
 	go get -u github.com/swaggo/files
 
 install:
-	go install github.com/swaggo/swag/cmd/swag@latest
+
 
 tidy:
 	go mod tidy
 
 build:
-	go build -o ./main ./main.go
+	go build -v -o ./main ./main.go
 
 clean:
 	rm -rf ./build
@@ -31,6 +32,6 @@ test:
 	go test -run TestBuildByDirNode
 	@echo Test Done!
 
-swagger:
+swag:
 	swag -v
-	cd ../ && swag init
+	swag init # 将在 src 目录下创建 docs 目录

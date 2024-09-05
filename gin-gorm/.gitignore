@@ -1,7 +1,6 @@
-./src/main
 .vscode/
 .idea/
 .DS_Store
 go.sum
 *.exe
-./src/main
+/src/main
