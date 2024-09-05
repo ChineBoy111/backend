@@ -7,8 +7,8 @@ import (
 )
 
 func Start() {
-	conf.Init()
-	router.InitRouter()
+	conf.LoadConf()      //! 加载配置文件
+	router.StartRouter() //! 注册路由，启动路由器
 }
 
 func Done() {

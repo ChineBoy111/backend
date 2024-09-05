@@ -7,8 +7,14 @@ init:
 	echo go mod init bronya.com/gin-gorm
 
 get:
-	echo go get github.com/spf13/viper
-	echo go get -u github.com/gin-gonic/gin
+	go get github.com/spf13/viper
+	go get -u github.com/gin-gonic/gin
+	go get -u github.com/swaggo/swag/cmd/swag
+	go get -u github.com/swaggo/gin-swagger
+	go get -u github.com/swaggo/files
+
+install:
+	go install github.com/swaggo/swag/cmd/swag@latest
 
 tidy:
 	go mod tidy
@@ -24,3 +30,7 @@ test:
 	go test -run TestBuildByMap && \
 	go test -run TestBuildByDirNode
 	@echo Test Done!
+
+swagger:
+	swag -v
+	cd ../ && swag init

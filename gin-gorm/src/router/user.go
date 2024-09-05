@@ -6,22 +6,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AppendUserRoutes
-// ! Append unregistered routes for user
+// AppendUserRoutes 添加未注册的 user 路由
 func AppendUserRoutes() {
-	RoutesAppender(func(publicRouteGroup, authenRouteGroup *gin.RouterGroup) {
+	Appender(func(publicRouteGroup, authenRouteGroup *gin.RouterGroup) {
 
 		//* publicRouteGroup
 		publicRouteGroup.POST("/login", func(context *gin.Context) {
 			context.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
 				"msg": "Login OK",
-			} /* gin.H is a shortcut for map[string]any */)
-		} /* callback */)
+			} /* gin.H 是 map[string]any 的别名 */)
+		} /* 回调函数 */)
 
-		//* creates a new sub route group of authenRouteGroup
-		userRouteGroup := authenRouteGroup.Group("/user" /* relativePath (prefix) */)
+		//* 创建一个 authenRouteGroup 的子路由组 userRouteGroup
+		userRouteGroup := authenRouteGroup.Group("/user" /* 路由前缀 */)
 
-		userRouteGroup.GET("" /* relativePath (prefix) */, func(context *gin.Context) {
+		userRouteGroup.GET("" /* 路由前缀 */, func(context *gin.Context) {
 			context.AbortWithStatusJSON(http.StatusOK, gin.H{
 				"data": []map[string]any{
 					{"id": 1, "name": "One.c"},

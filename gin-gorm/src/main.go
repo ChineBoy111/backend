@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,19 +8,18 @@ import (
 	"bronya.com/gin-gorm/src/cmd"
 )
 
-func main_() {
+func unusedMain1() {
 	defer cmd.Done()
 
-	// Initializing the server in a goroutine so that
-	// it won't block the graceful shutdown below 主协程可以继续运行
+	//! 在新协程中启动服务器，主协程不会阻塞，继续运行
 	go func() {
 		cmd.Start()
 	}()
 
 	quitChan := make(chan os.Signal, 1)
-	// kill (no param) default send syscall.SIGTERM
-	// kill -2 is syscall.SIGINT, also os.Interrupt
-	// kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
+	//? kill    发送 syscall.SIGTERM
+	//? kill -2 发送 syscall.SIGINT (os.Interrupt)
+	//? kill -9 发送 syscall.SIGKILL 但不能被捕获
 
 	//! 将指定的 os 信号转发到 quitChan 通道
 	signal.Notify(quitChan, syscall.SIGINT /* os.Interrupt */, syscall.SIGTERM)
@@ -30,17 +28,5 @@ func main_() {
 
 func main() {
 	defer cmd.Done()
-	rootCtx := context.Background()
-
-	listenerCtx, cancelFunc := signal.NotifyContext(
-		rootCtx, syscall.SIGINT, syscall.SIGTERM)
-	defer cancelFunc()
-
-	// Initializing the server in a goroutine so that
-	// it won't block the graceful shutdown below 主协程可以继续运行
-	go func() {
-		cmd.Start()
-	}()
-
-	<-listenerCtx.Done() // <-listenerCtx.Done() == {}
+	cmd.Start()
 }

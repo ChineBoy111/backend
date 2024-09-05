@@ -2,6 +2,9 @@ package test
 
 import (
 	"encoding/json"
+	"fmt"
+	"time"
+
 	// "io/fs"
 	"log"
 	"os"
@@ -10,12 +13,7 @@ import (
 	"testing"
 )
 
-/////////////////////////////////////////
-// Description: Test Clean             //
-// Author:      Tiancheng              //
-// Run command: go test -run TestClean //
-/////////////////////////////////////////
-
+// ! go test -run TestClean
 func TestClean(t *testing.T) {
 	// cmd := exec.Command("rm", "-rf", "../src")
 	// cmd.Run()
@@ -37,13 +35,8 @@ func mkdir(dirname string) {
 	// }
 }
 
-//////////////////////////////////////////////
-// Description: Test build by Map           //
-// Author:      Tiancheng                   //
-// Run command: go test -run TestBuildByMap //
-//////////////////////////////////////////////
-
-func loadJson(jsonMap *map[string]any) { // load a json file to a map
+// ! go test -run TestBuildByMap
+func loadJson(jsonMap *map[string]any) {
 	currDir, _ := os.Getwd()
 	rootDir = currDir[0:strings.LastIndex(currDir, sep)]
 	log.Printf("currDir = %s\n", currDir)
@@ -57,11 +50,11 @@ func loadJson(jsonMap *map[string]any) { // load a json file to a map
 
 func parseMap(jsonMap *map[string]any, prefix string) {
 	for _, v := range *jsonMap {
-		//! switch type
+		//! 类型 switch
 		switch v.(type) {
 		case string:
 			{
-				dirname, _ := v.(string) // type assertion
+				dirname, _ := v.(string) // 类型断言
 				if dirname == "" {
 					continue
 				}
@@ -93,12 +86,7 @@ func TestBuildByMap(t *testing.T) {
 	log.Println("Done!")
 }
 
-//////////////////////////////////////////////////
-// Description: Test build by DirNode           //
-// Author:      Tiancheng                       //
-// Run command: go test -run TestBuildByDirNode //
-//////////////////////////////////////////////////
-
+// ! go test -run TestBuildByDirNode
 type DirNode struct {
 	DirName  string    `json:"dirname"`
 	SubNodes []DirNode `json:"subdirs"`
@@ -139,4 +127,14 @@ func TestBuildByDirNode(t *testing.T) {
 	dirNode.loadJson()
 	dirNode.parseNode("")
 	log.Println("Done!")
+}
+
+// ! 从一个已关闭的空通道中读，返回通道元素类型的零值和 false（表示读失败）
+func TestNotify(t *testing.T) {
+	ch := make(chan int) // make(chan struct{})
+	go func() {
+		time.Sleep(5 * time.Second)
+		close(ch)
+	}()
+	fmt.Println(<-ch) // 0
 }
