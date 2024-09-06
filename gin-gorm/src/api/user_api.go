@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type IUserApi struct {
+type UserApi struct {
 }
 
-func NewUserApi() IUserApi {
-	return IUserApi{}
+func NewUserApi() UserApi {
+	return UserApi{}
 }
 
 // Login api 的 swagger 注释
@@ -24,7 +24,7 @@ func NewUserApi() IUserApi {
 // @Success     200   {string}   string   "登录成功"
 // @Failure     401   {string}   string   "登录失败"
 // @Router      /api/v1/public/user/login [post]
-func (IUserApi) Login(ctx *gin.Context) {
+func (UserApi) Login(ctx *gin.Context) {
 	ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
 		"msg": "Login OK",
 	} /* gin.H 是 map[string]any 的别名 */)

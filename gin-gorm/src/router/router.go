@@ -16,10 +16,7 @@ import (
 	"time"
 )
 
-// IRoutesRegFunc 用于注册路由的函数
-type IRoutesRegFunc = func(pubRouteGroup, authRouteGroup *gin.RouterGroup)
-
-var routersRegFuncArr []IRoutesRegFunc
+var pubRouteGroup, authRouteGroup *gin.RouterGroup
 
 // StartRouter 注册路由，启动路由器
 func StartRouter() {
@@ -30,16 +27,11 @@ func StartRouter() {
 	defer notifyCancel()
 
 	engine := gin.Default()
-	pubRouteGroup := engine.Group("/api/v1/public")
-	authRouteGroup := engine.Group("/api/v1")
+	pubRouteGroup = engine.Group("/api/v1/public")
+	authRouteGroup = engine.Group("/api/v1")
 
-	//* 添加未注册的路由
-	AppendUserRoutes()
-
-	for _, routersRegFunc := range routersRegFuncArr {
-		//* 注册路由
-		routersRegFunc(pubRouteGroup, authRouteGroup) // init
-	}
+	//* 注册路由
+	RegUserRoutes() // 注册 user 路由
 
 	//* 集成 swagger http://127.0.0.1:8888/swagger/index.html
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -77,12 +69,4 @@ func StartRouter() {
 	}
 	// <-timoutCtx.Done()
 	global.Logger.Infoln("Shutdown ok")
-}
-
-// Appender 添加未注册的路由
-func Appender(routersRegFunc IRoutesRegFunc) {
-	if routersRegFunc == nil {
-		return
-	}
-	routersRegFuncArr = append(routersRegFuncArr, routersRegFunc)
 }

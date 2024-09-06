@@ -21,7 +21,6 @@ func NewLogger() *zap.SugaredLogger {
 	core := zapcore.NewCore(getEncoder(), zapcore.NewMultiWriteSyncer(getWriterSyncer(), stdoutSync), logLevel)
 
 	logger := zap.New(core).Sugar()
-	logger.Infoln("========== Blazing fast, structured, leveled logging in Go. ==========")
 	return logger
 }
 

@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-func ConnDB() (dbSession *gorm.DB, err error) {
+func ConnMysql() (session *gorm.DB, err error) {
 
 	gormLogMod := gormLogger.Info
 
@@ -19,8 +19,8 @@ func ConnDB() (dbSession *gorm.DB, err error) {
 		gormLogMod = gormLogger.Error
 	}
 
-	//! 开启会话
-	dbSession, err = gorm.Open(mysql.Open(viper.GetString("db.mysql.dsn")), &gorm.Config{
+	//! 开启会话 session
+	session, err = gorm.Open(mysql.Open(viper.GetString("db.mysql.dsn")), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: false, //! 单数表名，默认 false
 			TablePrefix:   "t_",  //! 表名前缀 t_users
@@ -32,7 +32,7 @@ func ConnDB() (dbSession *gorm.DB, err error) {
 		return nil, err
 	}
 
-	db, _ := dbSession.DB()
+	db, _ := session.DB()
 	//* 最大空闲连接数，默认 2
 	db.SetMaxIdleConns(viper.GetInt("db.maxIdleConns"))
 	//* 最大连接数，默认 0，表示无限制
@@ -43,6 +43,6 @@ func ConnDB() (dbSession *gorm.DB, err error) {
 	db.SetConnMaxLifetime(time.Duration(viper.GetInt64("db.connMaxLifetime")))
 
 	//! 从 go 结构体自动迁移到数据库表，创建表
-	dbSession.AutoMigrate(&model.User{}) //* 传递指向一个 model.User 实例的指针
-	return dbSession, nil
+	session.AutoMigrate(&model.User{}) //* 传递指向一个 model.User 实例的指针
+	return session, nil
 }
