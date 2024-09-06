@@ -25,6 +25,9 @@ func unused() {
 	<-quitChan
 }
 
+// @title gin-gorm
+// @version 0.0.1
+// @description 后端 viper, zap, gin, gorm, go-redis, jwt-go
 func main() {
 	defer cmd.Done()
 	cmd.Start()

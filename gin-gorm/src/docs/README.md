@@ -9,9 +9,13 @@ go get -u github.com/swaggo/files
 
 export GOBIN="$HOME/bin"
 go install github.com/swaggo/swag/cmd/swag@latest
+```
 
-ls $GOBIN # swag
-swag -v   # swag version v1.16.3
+### 初始化 swagger
+
+```shell
+cd src
+swag init # 将在 src 目录下创建 docs 目录
 ```
 
 ### swagger 注释
@@ -57,9 +61,3 @@ api 注释
 // @Router      /api/v1/public/user/login [post]
 ```
 
-使用 swagger
-
-```shell
-cd src
-swag init # 将在 src 目录下创建 docs 目录
-```

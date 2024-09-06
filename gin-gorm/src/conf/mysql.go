@@ -1,8 +1,6 @@
 package conf
 
 import (
-	"time"
-
 	"bronya.com/gin-gorm/src/model"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -11,7 +9,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-func ConnMysql() (session *gorm.DB, err error) {
+func ConnMysql() (*gorm.DB, error) {
 
 	gormLogMod := gormLogger.Info
 
@@ -20,7 +18,7 @@ func ConnMysql() (session *gorm.DB, err error) {
 	}
 
 	//! 开启会话 session
-	session, err = gorm.Open(mysql.Open(viper.GetString("db.mysql.dsn")), &gorm.Config{
+	dbSession, err := gorm.Open(mysql.Open(viper.GetString("db.mysql.dsn")), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: false, //! 单数表名，默认 false
 			TablePrefix:   "t_",  //! 表名前缀 t_users
@@ -32,7 +30,7 @@ func ConnMysql() (session *gorm.DB, err error) {
 		return nil, err
 	}
 
-	db, _ := session.DB()
+	db, _ := dbSession.DB()
 	//* 最大空闲连接数，默认 2
 	db.SetMaxIdleConns(viper.GetInt("db.maxIdleConns"))
 	//* 最大连接数，默认 0，表示无限制
@@ -40,9 +38,9 @@ func ConnMysql() (session *gorm.DB, err error) {
 	//* 最长连接时间，默认 0，表示无限制
 	//! `type Duration int64`
 	//! 使用 type.Duration() 强制类型转换
-	db.SetConnMaxLifetime(time.Duration(viper.GetInt64("db.connMaxLifetime")))
+	db.SetConnMaxLifetime(viper.GetDuration("db.connMaxLifetime"))
 
 	//! 从 go 结构体自动迁移到数据库表，创建表
-	session.AutoMigrate(&model.User{}) //* 传递指向一个 model.User 实例的指针
-	return session, nil
+	dbSession.AutoMigrate(&model.User{}) //* 传递指向一个 model.User 实例的指针
+	return dbSession, nil
 }

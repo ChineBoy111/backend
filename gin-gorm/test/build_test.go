@@ -1,10 +1,13 @@
 package test
 
 import (
+	"bronya.com/gin-gorm/src/conf"
+	"bronya.com/gin-gorm/src/utils"
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"time"
-
 	// "io/fs"
 	"log"
 	"os"
@@ -12,13 +15,6 @@ import (
 	"strings"
 	"testing"
 )
-
-// ! go test -run TestClean
-func TestClean(t *testing.T) {
-	// cmd := exec.Command("rm", "-rf", "../src")
-	// cmd.Run()
-	log.Println("Done!")
-}
 
 var rootDir string
 var jsonFname = "./tree.json"
@@ -86,46 +82,45 @@ func TestBuildByMap(t *testing.T) {
 	log.Println("Done!")
 }
 
-// ! go test -run TestBuildByDirNode
-type DirNode struct {
-	DirName  string    `json:"dirname"`
-	SubNodes []DirNode `json:"subdirs"`
+type Dir struct {
+	DirName string `json:"dirname"`
+	SubDirs []Dir  `json:"subdirs"`
 }
 
-func (dirNode *DirNode) loadJson() {
+func (dir *Dir) loadJson() {
 	currDir, _ := os.Getwd()
 	rootDir = currDir[0:strings.LastIndex(currDir, sep)]
 	log.Printf("currDir = %s\n", currDir)
 	log.Printf("rootDir = %s\n", rootDir)
 	jsonBytes, _ := os.ReadFile(currDir + sep + jsonFname)
-	err := json.Unmarshal(jsonBytes, dirNode)
+	err := json.Unmarshal(jsonBytes, dir)
 	if err != nil {
 		panic(err.Error())
 	}
 }
 
-func (dirNode *DirNode) parseNode(prefix string) {
-	if dirNode.DirName != "" {
+func (dir *Dir) parseDir(prefix string) {
+	if dir.DirName != "" {
 		if prefix != "" {
-			dirNode.DirName = prefix + sep + dirNode.DirName
+			dir.DirName = prefix + sep + dir.DirName
 		}
-		prefix = dirNode.DirName
-		mkdir(dirNode.DirName)
+		prefix = dir.DirName
+		mkdir(dir.DirName)
 	}
 
-	if dirNode.SubNodes != nil {
-		for _, subNode := range dirNode.SubNodes {
-			subNode.parseNode(prefix)
+	if dir.SubDirs != nil {
+		for _, subNode := range dir.SubDirs {
+			subNode.parseDir(prefix)
 		}
 	}
 }
 
-// ! go test -run TestBuildByDirNode
-func TestBuildByDirNode(t *testing.T) {
+// ! go test -run TestBuildByDir
+func TestBuildByDir(t *testing.T) {
 	rootDir = ""
-	var dirNode DirNode
-	dirNode.loadJson()
-	dirNode.parseNode("")
+	var dir Dir
+	dir.loadJson()
+	dir.parseDir("")
 	log.Println("Done!")
 }
 
@@ -137,4 +132,48 @@ func TestNotify(t *testing.T) {
 		close(ch)
 	}()
 	fmt.Println(<-ch) // 0
+}
+
+// ! go test -run TestRedisCli
+func TestRedisCli(t *testing.T) {
+	redisCli, err := conf.ConnRedis() //! 连接 redis，创建表
+	if err != nil {
+		panic(fmt.Sprintf("Connect redis server error %s", err.Error()))
+	}
+
+	expiration := viper.GetDuration("db.redis.expiration") // 10 分钟
+
+	//! redisCli.Set(context.Background(), key, value, expiration).Err()
+	err = redisCli.Set(context.Background(), "username", "root", expiration*time.Second).Err()
+	if err != nil {
+		log.Printf("Redis set error %s\n", err.Error())
+	}
+
+	//! redisCli.Set(context.Background(), key, value, expiration).Err()
+	err = redisCli.Set(context.Background(), "password", "0228", expiration*time.Second).Err()
+	if err != nil {
+		log.Printf("Redis set error %s\n", err.Error())
+	}
+
+	//! redisCli.Get(context.Background(), key).Result()
+	username, err := redisCli.Get(context.Background(), "username").Result()
+	if err != nil {
+		log.Printf("Redis get error %s\n", err.Error())
+	}
+	log.Printf("Redis get username = %s", username)
+
+	//! redisCli.Del(context.Background(), key1, key2, ...).Err()
+	err = redisCli.Del(context.Background(), "username", "password").Err()
+	if err != nil {
+		log.Printf("Redis delete error %s\n", err.Error())
+	}
+}
+
+// ! go test -run TestGenToken
+func TestGenToken(t *testing.T) {
+	token, err := utils.GenToken(1, "root")
+	if err != nil {
+		panic(fmt.Sprintf("Generate token error %s", err.Error()))
+	}
+	log.Printf("token = %s\n", token)
 }

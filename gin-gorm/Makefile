@@ -8,8 +8,8 @@ init:
 
 get:
 	@echo "==================== get --update ===================="
-	go get -u github.com/spf13/viper # 读取配置文件
-	go get -u github.com/gin-gonic/gin # HTTP 服务器框架
+	go get -u github.com/spf13/viper
+	go get -u github.com/gin-gonic/gin
 	go get -u github.com/swaggo/swag/cmd/swag
 	go get -u github.com/swaggo/gin-swagger
 	go get -u github.com/swaggo/files
@@ -17,6 +17,7 @@ get:
 	go get -u gorm.io/gorm
 	go get -u gorm.io/driver/mysql
 	go get -u github.com/redis/go-redis/v9
+	go get -u github.com/golang-jwt/jwt/v5
 	@echo "==================== install -o $GOBIN/swag ===================="
 	echo "export GOBIN='$HOME/bin'"
 	go install github.com/swaggo/swag/cmd/swag@latest

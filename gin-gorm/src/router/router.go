@@ -1,7 +1,7 @@
 package router
 
 import (
-	_ "bronya.com/gin-gorm/src/docs" //* 集成 swagger http://127.0.0.1:8888/swagger/index.html
+	_ "bronya.com/gin-gorm/src/docs"
 	"bronya.com/gin-gorm/src/global"
 	"context"
 	"errors"
@@ -33,10 +33,10 @@ func StartRouter() {
 	//* 注册路由
 	RegUserRoutes() // 注册 user 路由
 
-	//* 集成 swagger http://127.0.0.1:8888/swagger/index.html
+	//* 访问 api 文档 http://127.0.0.1:3333/swagger/index.html
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	port := viper.GetString("server.port") // 8888
+	port := viper.GetString("server.port") // 3333
 	if port == "" {
 		port = "8080"
 	}
@@ -64,7 +64,7 @@ func StartRouter() {
 	defer timeoutCancel()
 
 	if err := server.Shutdown(timoutCtx); /* server.Shutdown(timeoutCtx) 会执行 <-timoutCtx.Done() */
-	err != nil {
+		err != nil {
 		global.Logger.Errorf("Shutdown error %s", err.Error())
 	}
 	// <-timoutCtx.Done()
