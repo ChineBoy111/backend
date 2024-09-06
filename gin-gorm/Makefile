@@ -7,7 +7,7 @@ init:
 	echo "go mod init bronya.com/gin-gorm"
 
 get:
-	@echo "==================== get --update ===================="
+	@echo "==================== Get --update ===================="
 	go get -u github.com/spf13/viper
 	go get -u github.com/gin-gonic/gin
 	go get -u github.com/swaggo/swag/cmd/swag
@@ -18,8 +18,7 @@ get:
 	go get -u gorm.io/driver/mysql
 	go get -u github.com/redis/go-redis/v9
 	go get -u github.com/golang-jwt/jwt/v5
-	@echo "==================== install -o $GOBIN/swag ===================="
-	echo "export GOBIN='$HOME/bin'"
+	@echo "====================   Install    ===================="
 	go install github.com/swaggo/swag/cmd/swag@latest
 
 tidy:

@@ -31,7 +31,6 @@ func mkdir(dirname string) {
 	// }
 }
 
-// ! go test -run TestBuildByMap
 func loadJson(jsonMap *map[string]any) {
 	currDir, _ := os.Getwd()
 	rootDir = currDir[0:strings.LastIndex(currDir, sep)]
@@ -125,6 +124,7 @@ func TestBuildByDir(t *testing.T) {
 }
 
 // ! 从一个已关闭的空通道中读，返回通道元素类型的零值和 false（表示读失败）
+// ! go test -run TestNotify
 func TestNotify(t *testing.T) {
 	ch := make(chan int) // make(chan struct{})
 	go func() {
@@ -169,11 +169,26 @@ func TestRedisCli(t *testing.T) {
 	}
 }
 
-// ! go test -run TestGenToken
-func TestGenToken(t *testing.T) {
-	token, err := utils.GenToken(1, "root")
+// ! go test -run TestToken
+func TestToken(t *testing.T) {
+	viper.AddConfigPath("../")
+	viper.SetConfigName("settings")
+	viper.SetConfigType("yaml")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Sprintf("Read in config error %s", err.Error()))
+	}
+
+	log.Println("==================== Generate token ====================")
+	tokStr, err := utils.GenToken(1, "root")
 	if err != nil {
 		panic(fmt.Sprintf("Generate token error %s", err.Error()))
 	}
-	log.Printf("token = %s\n", token)
+	log.Printf("token = %s\n", tokStr)
+	log.Println("==================== Parse token ====================")
+	payload, err, isValid := utils.ParseToken(tokStr) // tokStr + "suffix"
+	if err != nil {
+		panic(fmt.Sprintf("Parse token error %s, isValid = %v", err.Error(), isValid))
+	}
+	log.Printf("payload = %v, isValid = %v\n", payload, isValid)
 }

@@ -25,7 +25,11 @@ func NewUserApi() UserApi {
 // @Failure     401   {string}   string   "登录失败"
 // @Router      /api/v1/public/user/login [post]
 func (UserApi) Login(ctx *gin.Context) {
-	ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
-		"msg": "Login OK",
-	} /* gin.H 是 map[string]any 的别名 */)
+	//// ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
+	//// 	"msg": "Login ok",
+	//// } /* gin.H 是 map[string]any 的别名 */)
+
+	ctx.AbortWithStatusJSON(http.StatusOK, Resp{
+		Msg: "Login ok",
+	})
 }

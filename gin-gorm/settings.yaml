@@ -13,9 +13,8 @@ db:
 
   redis:
     addr: 127.0.0.1:6379
-    expiration: 600 # 秒
+    expiration: 600 # 单位 s
 
 jwt:
-  expiration: 1800 # 秒
-  signingKey: bronya.com
-
+  expiration: 1800 # 单位 s
+  signingKey: bronya.com # 签名密钥

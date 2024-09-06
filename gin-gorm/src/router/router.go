@@ -64,7 +64,7 @@ func StartRouter() {
 	defer timeoutCancel()
 
 	if err := server.Shutdown(timoutCtx); /* server.Shutdown(timeoutCtx) 会执行 <-timoutCtx.Done() */
-		err != nil {
+	err != nil {
 		global.Logger.Errorf("Shutdown error %s", err.Error())
 	}
 	// <-timoutCtx.Done()
