@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,7 +27,6 @@ func (UserApi) Login(ctx *gin.Context) {
 	//// 	"msg": "Login ok",
 	//// } /* gin.H 是 map[string]any 的别名 */)
 
-	ctx.AbortWithStatusJSON(http.StatusOK, Resp{
-		Msg: "Login ok",
-	})
+	// Ok(ctx, Resp{Msg: "Login ok"})
+	Err(ctx, Resp{Code: 9001, Msg: "Login error"})
 }

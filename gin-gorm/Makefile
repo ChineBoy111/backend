@@ -1,6 +1,8 @@
 .PHONY: init get # phony target
 
 run: build
+	rm -rf ./log
+	mkdir ./log
 	./main
 
 init:

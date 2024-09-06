@@ -31,6 +31,17 @@ type RespBody struct {
 
 ## HTTP 状态码
 
-| HTTP 状态码 | 描述          |
-| ----------- | ------------- |
-| 2xx         | http.StatusOK |
+| HTTP 状态码 | e.g.                               | 描述       |
+| ----------- | ---------------------------------- | ---------- |
+| 2xx         | http.StatusOK ==200                | 成功       |
+| 3xx         | http.StatusMovedPermanently == 301 | 重定向     |
+| 4xx         | http.StatusNotFound == 404         | 客户端错误 |
+| 5xx         | http.StatusBadGateway == 502       | 服务器错误 |
+
+## 判断 x, y 是否深度相等
+
+```go
+package reflect
+
+func DeepEqual(x, y interface{}) bool // 通过反射，判断 x, y 是否深度相等
+```
