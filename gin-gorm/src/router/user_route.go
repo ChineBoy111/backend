@@ -1,14 +1,13 @@
 package router
 
 import (
-	"net/http"
-
 	"bronya.com/gin-gorm/src/api"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-// RegUserRoutes 注册 user 路由
-func RegUserRoutes() {
+// RegisterUserRoute 注册 user 路由
+func RegisterUserRoute() {
 	userApi := api.NewUserApi()
 
 	//* 创建 pubRouteGroup 的子路由组 pubUserRouteGroup

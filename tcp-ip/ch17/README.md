@@ -138,19 +138,19 @@ struct timeval {
 }
 ```
 
-### 条件触发（默认）和边沿触发
+### 水平触发（默认）和边沿触发
 
-- 条件触发 Level Triggered, **LT** - fd 可读/可写时，epoll_wait 函数返回该事件（持续通知该事件）直到数据被读出或写入结束，类似数字电路 01 电平触发
+- 水平触发 Level Triggered, **LT** - fd 可读/可写时，epoll_wait 函数返回该事件（持续通知该事件）直到数据被读出或写入结束，类似数字电路 01 电平触发
 - 边沿触发 Edge Triggered, **ET** - fd 由 不可读/写 ==> 可读/写 或 由 可读/写 ==> 不可读/写 时，epoll_wait 函数返回该事件（该事件通知一次），类似数字电路边沿触发
 
 场景
 
-- 连接的建立和关闭：离散事件，使用条件触发（默认）
+- 连接的建立和关闭：离散事件，使用水平触发（默认）
 
 - 传输流式数据：流式事件，使用边沿触发
 
 ```c++
-epollEvent.events = EPOLLIN;           // 条件触发（默认）Level Trigger, LT
+epollEvent.events = EPOLLIN;           // 水平触发（默认）Level Trigger, LT
 epollEvent.events = EPOLLIN | EPOLLET; // 边沿触发 Edge Trigger, ET
 ```
 

@@ -2,18 +2,22 @@
 
 结构体标签 (Struct Tag) ：结构体字段的元信息
 
-例 gorm
+例 gorm 标签
 
 ```go
 type User struct {
-	ID      uint `gorm:"primarykey"` // 主键
-	Deleted bool `gorm:"index"`      // 为 users 表的 deleted 字段创建索引
-	// 32 字节、非空、users 表中的字段名为 name
+	//! primarykey  主键
+	ID      uint `gorm:"primarykey"` 
+	//! index       为 users 表的 deleted 字段创建索引
+	Deleted bool `gorm:"index"`
+	//! size:32     32 字节
+	//! not null    非空
+	//! column:name users 表中的字段名为 name
 	Username string `gorm:"size:32;not null;column:name"`
 }
 ```
 
-例 json
+例 json 标签
 
 ```go
 type RespBody struct {

@@ -7,12 +7,12 @@
     { "dirname": "data" },
     { "dirname": "global" },
     { "dirname": "middleware" },
-    { "dirname": "model" },
+    { "dirname": "dao" },
     { "dirname": "router" },
     {
       "dirname": "service",
       "subdirs": [{ "dirname": "dto" }]
     },
-    { "dirname": "utils" }
+    { "dirname": "util" }
   ]
 }

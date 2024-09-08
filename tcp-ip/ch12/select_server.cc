@@ -53,10 +53,10 @@ int main(int argc, char *argv[]) {
 
         int numReady = //! numReady - IO 就绪 fd 数量
             select(
-                numFd, //! numFd - fd_set 的最大 fd 值 +1
+                numFd, //! numFd       - fd_set 的最大 fd 值 +1（fd 的数量）
                 &backup, //! readFdSet - &fd_set 监听是否可读，NULL 表示不监听
-                NULL, //! writeFdSet - &fd_set 监听是否可写，NULL 表示不监听
-                NULL, //! exceptFdSet - &fd_set 监听有无异常，NULL 表示不监听
+                NULL, //! writeFdSet   - &fd_set 监听是否可写，NULL 表示不监听
+                NULL, //! exceptFdSet  - &fd_set 监听有无异常，NULL 表示不监听
                 &timeout);    //! timeout 超时
         if (numReady == -1) { //! 有异常返回 -1
             perror("[ERROR] Select error");

@@ -3,6 +3,7 @@ package router
 import (
 	_ "bronya.com/gin-gorm/src/docs"
 	"bronya.com/gin-gorm/src/global"
+	"bronya.com/gin-gorm/src/model"
 	"context"
 	"errors"
 	"fmt"
@@ -30,8 +31,11 @@ func StartRouter() {
 	pubRouteGroup = engine.Group("/api/v1/public")
 	authRouteGroup = engine.Group("/api/v1")
 
+	//* 注册自定义路由验证器
+	model.RegisterCustomValidator()
+
 	//* 注册路由
-	RegUserRoutes() // 注册 user 路由
+	RegisterUserRoute() // 注册 user 路由
 
 	//* 访问 api 文档 http://127.0.0.1:3333/swagger/index.html
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

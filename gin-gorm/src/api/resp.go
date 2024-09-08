@@ -1,10 +1,9 @@
 package api
 
 import (
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"reflect"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Resp struct {
@@ -25,7 +24,7 @@ func (resp Resp) IsEmpty() bool {
 
 func Ok(ctx *gin.Context, resp Resp) { //* 2xx 成功
 	if resp.IsEmpty() {
-		ctx.AbortWithStatus(http.StatusOK)
+		ctx.AbortWithStatus(http.StatusOK) // 200
 		return
 	}
 	if resp.Status < 200 || resp.Status >= 300 {
@@ -34,23 +33,23 @@ func Ok(ctx *gin.Context, resp Resp) { //* 2xx 成功
 	ctx.AbortWithStatusJSON(resp.Status, resp)
 }
 
-func Err(ctx *gin.Context, resp Resp) { //* 4xx 客户端错误
+func ClientErr(ctx *gin.Context, resp Resp) { //* 4xx 客户端错误
 	if resp.IsEmpty() {
-		ctx.AbortWithStatus(http.StatusNotFound) // 404
+		ctx.AbortWithStatus(http.StatusBadRequest) // 400
 		return
 	}
 	if resp.Status < 400 || resp.Status >= 500 {
-		resp.Status = http.StatusNotFound // 404
+		resp.Status = http.StatusBadRequest // 400
 	}
 	ctx.AbortWithStatusJSON(resp.Status, resp)
 }
 
-func SrvErr(ctx *gin.Context, resp Resp) {
+func ServerErr(ctx *gin.Context, resp Resp) {
 	if resp.IsEmpty() {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		ctx.AbortWithStatus(http.StatusInternalServerError) // 500
 	}
 	if resp.Status < 500 {
-		resp.Status = http.StatusInternalServerError //
+		resp.Status = http.StatusInternalServerError // 500
 	}
 	ctx.AbortWithStatusJSON(resp.Status, resp)
 }

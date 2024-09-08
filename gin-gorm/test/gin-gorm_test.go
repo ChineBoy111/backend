@@ -2,7 +2,7 @@ package test
 
 import (
 	"bronya.com/gin-gorm/src/conf"
-	"bronya.com/gin-gorm/src/utils"
+	"bronya.com/gin-gorm/src/util"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -180,13 +180,13 @@ func TestToken(t *testing.T) {
 	}
 
 	log.Println("==================== Generate token ====================")
-	tokStr, err := utils.GenToken(1, "root")
+	tokStr, err := util.GenToken(1, "root")
 	if err != nil {
 		panic(fmt.Sprintf("Generate token error %s", err.Error()))
 	}
 	log.Printf("token = %s\n", tokStr)
 	log.Println("==================== Parse token ====================")
-	payload, err, isValid := utils.ParseToken(tokStr) // tokStr + "suffix"
+	payload, err, isValid := util.ParseToken(tokStr) // tokStr + "suffix"
 	if err != nil {
 		panic(fmt.Sprintf("Parse token error %s, isValid = %v", err.Error(), isValid))
 	}

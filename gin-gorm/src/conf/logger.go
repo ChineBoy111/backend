@@ -1,14 +1,13 @@
 package conf
 
 import (
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"log"
 	"os"
 	"path/filepath"
 	"time"
-
-	"github.com/spf13/viper"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
 func NewLogger() *zap.SugaredLogger {
@@ -43,9 +42,9 @@ func getWriterSyncer() zapcore.WriteSyncer {
 	//! O_CREATE 如果文件不存在，则创建文件
 	//! O_RDONLY 只读
 	//! O_WRONLY 只写
-	//! O_RDWR 读写
+	//! O_RDWR   读写
 	//! O_APPEND 追加
-	//! O_TRUNC 重写
+	//! O_TRUNC  重写
 	fp, _ := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0755)
 	return zapcore.AddSync(fp /* fp 实现了 io.Writer 接口 */)
 }

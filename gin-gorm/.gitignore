@@ -5,3 +5,4 @@ go.sum
 *.exe
 main
 log
+src/docs/

@@ -12,10 +12,11 @@
 #define BUF_SIZE 3
 #define EPOLL_SIZE 50
 
-// 连接的建立和关闭：离散事件，使用条件触发（默认）
-//! epollEvent.events = EPOLLIN;
+// 连接的建立和关闭：离散事件，使用水平触发（默认）
+//* epollEvent.events = EPOLLIN;
 // 传输流式数据：流式事件，使用边沿触发
-//! epollEvent.events = EPOLLIN | EPOLLET;
+//* epollEvent.events = EPOLLIN | EPOLLET;
+
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         printf("Usage: %s <port>\n", argv[0]);
@@ -44,17 +45,18 @@ int main(int argc, char *argv[]) {
     }
 
     //! epoll_create 函数
-    //! 创建 epoll 实例 `epollInstance`
+    //! 创建 epoll 实例 epollInstance，返回 epollInstance 的文件描述符
     int epollInstanceFd = epoll_create(EPOLL_SIZE);
 
-    //! 定义 socketSocketFd 可读事件，边沿触发（默认）
+    //! 定义 epollEvent 事件：serverSocketFd 可读
+    //! 触发方式：边沿触发
     epoll_event epollEvent{};
     epollEvent.events = EPOLLIN | EPOLLET; // 文件描述符 serverSocketFd 可读
     epollEvent.data.fd = serverSocketFd;
 
     //! epoll_ctl 函数
-    //! 向 epoll 实例 `epollInstance` 中添加 socketSocketFd 可读事件
-    //* 监听 epollEvent 事件，serverSocketFd 可读时触发
+    //! 向 epoll 实例 epollInstance 中添加 epollEvent 事件
+    //? serverSocketFd 从不可读到可读时触发
     epoll_ctl(epollInstanceFd, EPOLL_CTL_ADD, serverSocketFd, &epollEvent);
 
     //! 创建监听事件数组 eventArr
@@ -66,17 +68,17 @@ int main(int argc, char *argv[]) {
     while (true) {
         //! epoll_wait 函数
         //! 阻塞等待已添加事件发生或超时
-        int triggeredEventCnt = epoll_wait(epollInstanceFd, eventArr,
+        int triggeredEventIdx = epoll_wait(epollInstanceFd, eventArr,
                                            EPOLL_SIZE, -1 /* 不会超时 */);
-        if (triggeredEventCnt == -1) {
+        if (triggeredEventIdx == -1) {
             perror("[ERROR] Fatal error");
             break;
         }
 
         printf("Loop count = %d\n", ++cnt);
 
-        for (int i = 0; i < triggeredEventCnt; i++) {
-            //! serverSocketFd 可读，即监听到客户端的连接请求
+        for (int i = 0; i < triggeredEventIdx; i++) {
+            //! serverSocketFd 从不可读到可读，即收到客户端的连接请求
             if (eventArr[i].data.fd == serverSocketFd) {
                 //* 是 serverSocketFd
                 sockaddr_in clientAddr{};
@@ -92,36 +94,40 @@ int main(int argc, char *argv[]) {
                 printf("[INFO] Client socket fd %d connected\n",
                        clientSocketFd);
 
-                //! 定义 clientSocketFd 可读事件，条件触发
-                epollEvent.events = EPOLLIN; // 文件描述符 clientSocketFd 可读
+                //! 定义 cliEpollEvent 事件：clientSocketFd 可读
+                //! 触发方式：水平触发
+                epoll_event cliEpollEvent{};
+                cliEpollEvent.events =
+                    EPOLLIN; // clientSocketFd 可读
 
-                //// 定义clientSocketFd 可读事件，边沿触发（默认）
-                //// epollEvent.events =
+                //// 定义 cliEpollEvent 事件：clientSocketFd 可读
+                //// 触发方式：水平触发
+                //// cliEpollEvent.events =
                 ////     EPOLLIN | EPOLLET; // 文件描述符 clientSocketFd 可读
 
-                epollEvent.data.fd = clientSocketFd;
+                cliEpollEvent.data.fd = clientSocketFd;
 
                 //! epoll_ctl 函数
-                //! 向 epoll 实例 `epollInstance` 中添加 clientSocketFd 可读事件
-                //* 监听 epollEvent 事件，clientSocketFd 可读时触发
+                //! 向 epoll 实例 epollInstance 中添加 cliEpollEvent 事件
+                //! clientSocketFd 可读时触发
                 epoll_ctl(epollInstanceFd, EPOLL_CTL_ADD, clientSocketFd,
                           &epollEvent);
             } else {
                 //* 是 clientSocketFd
                 //! clientSocketFd 可读，即收到客户端发送的数据
-                int clientSocketFd_ = eventArr[i].data.fd;
-                int readBytes = read(clientSocketFd_, buf, BUF_SIZE);
+                int readableClientSocketFd = eventArr[i].data.fd;
+                int readBytes = read(readableClientSocketFd, buf, BUF_SIZE);
                 if (readBytes <= 0) {
                     //! epoll_ctl 函数
-                    //! 从 epoll 实例 `epollInstance` 中删除 clientSocketFd_
-                    epoll_ctl(epollInstanceFd, EPOLL_CTL_DEL, clientSocketFd_,
+                    //! 从 epoll 实例 epollInstance 中删除 readableClientSocketFd
+                    epoll_ctl(epollInstanceFd, EPOLL_CTL_DEL, readableClientSocketFd,
                               NULL);
-                    close(clientSocketFd_);
+                    close(readableClientSocketFd);
                     printf("[INFO] Client socket fd %d disconnected\n",
-                           clientSocketFd_);
+                           readableClientSocketFd);
                 } else {
                     // echo
-                    write(clientSocketFd_, buf, readBytes);
+                    write(readableClientSocketFd, buf, readBytes);
                 }
             }
         }
