@@ -6,3 +6,7 @@
 4. ORM 框架和 MySQL 驱动 [gorm](https://github.com/go-gorm/gorm)
 5. Go 的 Redis 客户端 [go-redis](https://github.com/redis/go-redis)
 6. JSON Web Tokens 的 Go 实现 [jwt-go](https://github.com/golang-jwt/jwt)
+
+三层架构
+- API (Controller) + DTO (Data Transfer Object)
+- Service + DAO (Data Access Object)

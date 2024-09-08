@@ -10,16 +10,20 @@ import (
 	"time"
 )
 
+var logger *zap.SugaredLogger
+
 func NewLogger() *zap.SugaredLogger {
-	logLevel := zap.DebugLevel
-	if viper.GetString("buildType") == "Release" {
-		logLevel = zap.InfoLevel
+	if logger == nil {
+		logLevel := zap.DebugLevel
+		if viper.GetString("buildType") == "Release" {
+			logLevel = zap.InfoLevel
+		}
+
+		stdoutSync := zapcore.AddSync(os.Stdout)
+		core := zapcore.NewCore(getEncoder(), zapcore.NewMultiWriteSyncer(getWriterSyncer(), stdoutSync), logLevel)
+
+		logger = zap.New(core).Sugar()
 	}
-
-	stdoutSync := zapcore.AddSync(os.Stdout)
-	core := zapcore.NewCore(getEncoder(), zapcore.NewMultiWriteSyncer(getWriterSyncer(), stdoutSync), logLevel)
-
-	logger := zap.New(core).Sugar()
 	return logger
 }
 

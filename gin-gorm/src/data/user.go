@@ -1,7 +1,8 @@
-package model
+package data
 
 import "gorm.io/gorm"
 
+// User Data
 type User struct {
 	// ID
 	// CreatedAt 创建时间

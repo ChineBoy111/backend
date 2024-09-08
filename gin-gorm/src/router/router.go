@@ -1,7 +1,7 @@
 package router
 
 import (
-	"bronya.com/gin-gorm/src/api"
+	"bronya.com/gin-gorm/src/controller"
 	_ "bronya.com/gin-gorm/src/docs"
 	"bronya.com/gin-gorm/src/global"
 	"context"
@@ -17,7 +17,11 @@ import (
 	"time"
 )
 
-var pubRouteGroup, authRouteGroup *gin.RouterGroup
+// ! rg     | router group
+// ! pubRg  | public router group
+// ! authRg | authorized route group
+
+var pubRg, authRg *gin.RouterGroup
 
 // StartRouter 注册路由，启动路由器
 func StartRouter() {
@@ -28,16 +32,16 @@ func StartRouter() {
 	defer notifyCancel()
 
 	engine := gin.Default()
-	pubRouteGroup = engine.Group("/api/v1/public")
-	authRouteGroup = engine.Group("/api/v1")
+	pubRg = engine.Group("/controller/v1/public")
+	authRg = engine.Group("/controller/v1")
 
 	//* 注册自定义字段校验器
-	api.RegisterCustomValidator()
+	controller.RegisterCustomValidator()
 
-	//* 注册路由
-	RegisterUserRoute() // 注册 user 路由
+	//* 注册路由组
+	RegUserRg() // 注册 user 路由组
 
-	//* 访问 api 文档 http://127.0.0.1:3333/swagger/index.html
+	//* 访问 controller 文档 http://127.0.0.1:3333/swagger/index.html
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	port := viper.GetString("server.port") // 3333

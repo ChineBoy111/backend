@@ -1,3 +1,9 @@
+# api
+
+api 路由函数
+
+> api 等价于 controller
+
 ## 结构体标签
 
 结构体标签 (Struct Tag) ：结构体字段的元信息，name:value 形式
@@ -52,7 +58,7 @@ func DeepEqual(x, y interface{}) bool // 通过反射，判断 x, y 是否深度
 
 ## 自定义字段校验器
 
-数据传输对象 [UserLoginDto](../service/dto/user_dto.go)
+数据传输对象 [UserLoginDto](../data/user.go)
 
 ```go
 type UserLoginDto struct {

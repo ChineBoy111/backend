@@ -39,8 +39,8 @@ api 注释
 
 ```go
 // @Tag         标签
-// @Summary     api 功能，简略
-// @Description api 功能，详细
+// @Summary     controller 功能，简略
+// @Description controller 功能，详细
 // @Accept      json
 // @Produce     json
 // @Param       参数名   path/formData   数据类型   是否必须   描述
@@ -49,7 +49,7 @@ api 注释
 // @Router      路由 [请求方法]
 
 // 例
-// @Tag         用户 api
+// @Tag         用户 controller
 // @Summary     用户登录，简略
 // @Description 用户登录，详细
 // @Accept      json
@@ -58,6 +58,6 @@ api 注释
 // @Param       password   formData   string   true   "密码"
 // @Success     200   {string}   string   "登录成功"
 // @Failure     401   {string}   string   "登录失败"
-// @Router      /api/v1/public/user/login [post]
+// @Router      /controller/v1/public/user/login [post]
 ```
 

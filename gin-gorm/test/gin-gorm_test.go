@@ -4,124 +4,12 @@ import (
 	"bronya.com/gin-gorm/src/conf"
 	"bronya.com/gin-gorm/src/util"
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/spf13/viper"
-	"time"
-	// "io/fs"
 	"log"
-	"os"
-	"path/filepath"
-	"strings"
 	"testing"
+	"time"
 )
-
-var rootDir string
-var jsonFname = "./tree.json"
-var sep = string(filepath.Separator)
-
-func mkdir(dirname string) {
-	if dirname == "" {
-		return
-	}
-	log.Printf("dirname = %s\n", dirname)
-	// err := os.MkdirAll(rootDir+sep+dirname, fs.ModePerm /* 0777 */)
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
-}
-
-func loadJson(jsonMap *map[string]any) {
-	currDir, _ := os.Getwd()
-	rootDir = currDir[0:strings.LastIndex(currDir, sep)]
-	log.Printf("currDir = %s\n", currDir)
-	log.Printf("rootDir = %s\n", rootDir)
-	jsonBytes, _ := os.ReadFile(currDir + sep + jsonFname)
-	err := json.Unmarshal(jsonBytes, jsonMap)
-	if err != nil {
-		panic(err.Error())
-	}
-}
-
-func parseMap(jsonMap *map[string]any, prefix string) {
-	for _, v := range *jsonMap {
-		//! 类型 switch
-		switch v.(type) {
-		case string:
-			{
-				dirname, _ := v.(string) // 类型断言
-				if dirname == "" {
-					continue
-				}
-				if prefix != "" {
-					dirname = prefix + sep + dirname
-				}
-				prefix = dirname
-				mkdir(dirname)
-			}
-		case []any:
-			parseArr(v.([]any), prefix)
-		}
-	}
-}
-
-func parseArr(jsonArr []any, prefix string) {
-	for _, v := range jsonArr {
-		mapV, _ := v.(map[string]any)
-		parseMap(&mapV, prefix)
-	}
-}
-
-// ! go test -run TestBuildByMap
-func TestBuildByMap(t *testing.T) {
-	rootDir = ""
-	var jsonMap map[string]any
-	loadJson(&jsonMap)
-	parseMap(&jsonMap, "")
-	log.Println("Done!")
-}
-
-type Dir struct {
-	DirName string `json:"dirname"`
-	SubDirs []Dir  `json:"subdirs"`
-}
-
-func (dir *Dir) loadJson() {
-	currDir, _ := os.Getwd()
-	rootDir = currDir[0:strings.LastIndex(currDir, sep)]
-	log.Printf("currDir = %s\n", currDir)
-	log.Printf("rootDir = %s\n", rootDir)
-	jsonBytes, _ := os.ReadFile(currDir + sep + jsonFname)
-	err := json.Unmarshal(jsonBytes, dir)
-	if err != nil {
-		panic(err.Error())
-	}
-}
-
-func (dir *Dir) parseDir(prefix string) {
-	if dir.DirName != "" {
-		if prefix != "" {
-			dir.DirName = prefix + sep + dir.DirName
-		}
-		prefix = dir.DirName
-		mkdir(dir.DirName)
-	}
-
-	if dir.SubDirs != nil {
-		for _, subNode := range dir.SubDirs {
-			subNode.parseDir(prefix)
-		}
-	}
-}
-
-// ! go test -run TestBuildByDir
-func TestBuildByDir(t *testing.T) {
-	rootDir = ""
-	var dir Dir
-	dir.loadJson()
-	dir.parseDir("")
-	log.Println("Done!")
-}
 
 // ! 从一个已关闭的空通道中读，返回通道元素类型的零值和 false（表示读失败）
 // ! go test -run TestNotify

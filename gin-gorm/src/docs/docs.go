@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/public/user/login": {
+        "/controller/v1/public/user/login": {
             "post": {
                 "description": "用户登录，详细",
                 "consumes": [
