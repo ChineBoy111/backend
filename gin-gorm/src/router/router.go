@@ -1,9 +1,9 @@
 package router
 
 import (
+	"bronya.com/gin-gorm/src/api"
 	_ "bronya.com/gin-gorm/src/docs"
 	"bronya.com/gin-gorm/src/global"
-	"bronya.com/gin-gorm/src/model"
 	"context"
 	"errors"
 	"fmt"
@@ -31,8 +31,8 @@ func StartRouter() {
 	pubRouteGroup = engine.Group("/api/v1/public")
 	authRouteGroup = engine.Group("/api/v1")
 
-	//* 注册自定义路由验证器
-	model.RegisterCustomValidator()
+	//* 注册自定义字段校验器
+	api.RegisterCustomValidator()
 
 	//* 注册路由
 	RegisterUserRoute() // 注册 user 路由

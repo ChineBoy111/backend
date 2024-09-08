@@ -41,6 +41,6 @@ func ConnMysql() (*gorm.DB, error) {
 	db.SetConnMaxLifetime(viper.GetDuration("db.connMaxLifetime"))
 
 	//! 从 go 结构体自动迁移到数据库表，创建表
-	dbSession.AutoMigrate(&model.User{}) //* 传递指向一个 model.User 实例的指针
+	dbSession.AutoMigrate(&model.User{}) //* 传递指向一个 model.User 对象的指针
 	return dbSession, nil
 }
