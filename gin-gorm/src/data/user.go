@@ -1,8 +1,11 @@
 package data
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
-// User Data
+// ! ==================== Data 数据对象 ====================
+
 type User struct {
 	// ID
 	// CreatedAt 创建时间

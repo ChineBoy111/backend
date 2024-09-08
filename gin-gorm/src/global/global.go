@@ -6,10 +6,10 @@ import (
 	"gorm.io/gorm"
 )
 
-//  全局变量
+// ! ==================== 全局变量 ====================
 
 var (
 	Logger   *zap.SugaredLogger
-	Db       *gorm.DB
+	Database *gorm.DB
 	RedisCli *redis.Client
 )

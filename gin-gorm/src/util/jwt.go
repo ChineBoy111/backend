@@ -9,7 +9,7 @@ import (
 
 // Payload 载荷
 type Payload struct {
-	Id                   int
+	Id                   uint
 	Username             string
 	jwt.RegisteredClaims //! 等价于 RegisteredClaims jwt.RegisteredClaims
 }
@@ -18,7 +18,7 @@ type Payload struct {
 var signingKey = []byte(viper.GetString("jwt.signingKey"))
 
 // GenToken 返回已签名的 tokStr 字符串和可能的错误 err
-func GenToken(id int, username string) (tokStr string, err error) {
+func GenToken(id uint, username string) (tokStr string, err error) {
 	expiration := viper.GetDuration("jwt.expiration")
 
 	registeredClaims := jwt.RegisteredClaims{

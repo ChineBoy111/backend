@@ -1,6 +1,6 @@
-package controller
+package dto
 
-//! DTO, Data Transfer Object 数据传输对象
+//! ==================== DTO, Data Transfer Object 数据传输对象 ====================
 
 type UserLoginDto struct {
 	//* json:"name"

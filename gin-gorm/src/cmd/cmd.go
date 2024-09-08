@@ -15,7 +15,7 @@ func Start() {
 		global.Logger.Errorf("Connect mysql error %s", err.Error())
 		panic(err.Error())
 	}
-	global.Db = session
+	global.Database = session
 
 	redisCli, err := conf.ConnRedis() //! 连接 redis，创建表
 	if err != nil {

@@ -7,6 +7,12 @@
 5. Go 的 Redis 客户端 [go-redis](https://github.com/redis/go-redis)
 6. JSON Web Tokens 的 Go 实现 [jwt-go](https://github.com/golang-jwt/jwt)
 
-三层架构
-- API (Controller) + DTO (Data Transfer Object)
-- Service + DAO (Data Access Object)
+## 三层架构
+
+![三层架构](./asset/schema.png)
+
+- API
+- Service
+- DAO
+
+

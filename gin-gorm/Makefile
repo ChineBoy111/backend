@@ -1,7 +1,7 @@
 .PHONY: init get # phony target
 
 run: build
-	if [! -d ./log ]; then mkdir ./log; fi
+	mkdir ./log
 	./main
 
 init:
