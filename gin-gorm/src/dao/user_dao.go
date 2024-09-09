@@ -25,17 +25,23 @@ func NewUserDao() *UserDao {
 	return userDao
 }
 
-func (userDao *UserDao) SelectUserByUsernameAndPassword(userLoginDto *dto.UserLoginDto) model.User {
+func (userDao *UserDao) SelectUserByUsernameAndPassword(username, password string) model.User {
 	var user model.User
-	userDao.database.Where("username = ? and password = ?", userLoginDto.Username, userLoginDto.Password).First(&user)
+	userDao.database.Model(&model.User{}).Where("username = ? and password = ?", username, password).First(&user)
 	return user
 }
 
 func (userDao *UserDao) InsertUser(userInsertDto *dto.UserInsertDto) error {
 	user := userInsertDto.ToUser()
-	err := userDao.database.Save(&user).Error
+	err := userDao.database.Model(&model.User{}).Save(&user).Error
 	if err == nil {
 		userInsertDto.ID = user.ID //! 接收 gorm 生成的主键 ID
 	}
 	return err
+}
+
+func (userDao *UserDao) SelectUserByUsername(username string) model.User {
+	var user model.User
+	userDao.database.Model(&model.User{}).Where("username = ?", username).First(&user)
+	return user
 }

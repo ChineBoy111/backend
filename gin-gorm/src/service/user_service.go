@@ -24,7 +24,7 @@ func NewUserService() *UserService {
 }
 func (userService *UserService) Login(userLoginDto *dto.UserLoginDto) (model.User, error) {
 	var err error
-	user := userService.UserDao.SelectUserByUsernameAndPassword(userLoginDto)
+	user := userService.UserDao.SelectUserByUsernameAndPassword(userLoginDto.Username, userLoginDto.Password)
 	if user.ID == 0 {
 		err = errors.New("username or password error")
 	}
@@ -32,5 +32,8 @@ func (userService *UserService) Login(userLoginDto *dto.UserLoginDto) (model.Use
 }
 
 func (userService *UserService) AddUser(userInsertDto *dto.UserInsertDto) error {
+	if userService.UserDao.SelectUserByUsername(userInsertDto.Username).ID != 0 {
+		return errors.New("username already exists")
+	}
 	return userService.UserDao.InsertUser(userInsertDto)
 }
