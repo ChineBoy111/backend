@@ -27,6 +27,5 @@ func Cors() gin.HandlerFunc {
 			return true
 		},
 	}
-
 	return cors.New(corsConfig)
 }

@@ -2,8 +2,8 @@ package service
 
 import (
 	"bronya.com/gin-gorm/src/dao"
-	"bronya.com/gin-gorm/src/dao/data"
-	"bronya.com/gin-gorm/src/service/dto"
+	"bronya.com/gin-gorm/src/dto"
+	"bronya.com/gin-gorm/src/model"
 	"errors"
 )
 
@@ -22,11 +22,15 @@ func NewUserService() *UserService {
 	}
 	return userService
 }
-func (userService UserService) Login(userLoginDto dto.UserLoginDto) (data.User, error) {
+func (userService *UserService) Login(userLoginDto *dto.UserLoginDto) (model.User, error) {
 	var err error
-	user := userService.UserDao.SelectUserByUsernameAndPassword(userLoginDto.Username, userLoginDto.Password)
+	user := userService.UserDao.SelectUserByUsernameAndPassword(userLoginDto)
 	if user.ID == 0 {
 		err = errors.New("username or password error")
 	}
 	return user, err
+}
+
+func (userService *UserService) AddUser(userInsertDto *dto.UserInsertDto) error {
+	return userService.UserDao.InsertUser(userInsertDto)
 }

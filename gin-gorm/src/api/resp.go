@@ -19,8 +19,8 @@ type Resp struct {
 	Code int `json:"code,omitempty"`
 	//  msg         json 中的字段名为 msg
 	Msg string `json:"msg,omitempty"`
-	//  data        json 中的字段名为 data
-	Data any `json:"data,omitempty"`
+	//  model        json 中的字段名为 model
+	Data any `json:"model,omitempty"`
 }
 
 func (resp Resp) IsEmpty() bool {

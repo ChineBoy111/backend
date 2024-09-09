@@ -21,7 +21,7 @@ func UserRouteGroup() {
 	{ // authorizedUserRouteGroup
 		authorizedUserRouteGroup.GET("" /* 路由前缀 */, func(context *gin.Context) {
 			context.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"data": []map[string]any{
+				"model": []map[string]any{
 					{"id": 1, "name": "One.c"},
 					{"id": 1, "name": "Two.go"},
 					{"id": 3, "name": "Three.ts"},

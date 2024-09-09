@@ -4,17 +4,13 @@
     { "dirname": "api" },
     { "dirname": "cmd" },
     { "dirname": "conf" },
-    {
-      "dirname": "dao",
-      "subdirs": [{ "dirname": "data" }]
-    },
+    { "dirname": "dao" },
+    { "dirname": "dto" },
     { "dirname": "global" },
     { "dirname": "middleware" },
+    { "dirname": "model" },
     { "dirname": "router" },
-    {
-      "dirname": "service",
-      "subdirs": [{ "dirname": "dto" }]
-    },
+    { "dirname": "service" },
     { "dirname": "util" }
   ]
 }

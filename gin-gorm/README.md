@@ -13,10 +13,6 @@
 避免循环依赖 (import cycle not allowed)
 ![三层架构](./asset/schema.png)
 
-- api/
-- service/dto/
-- dao/data/
-
 ### api 层
 
 ```go

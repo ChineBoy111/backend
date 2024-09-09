@@ -1,8 +1,9 @@
 package dao
 
 import (
-	"bronya.com/gin-gorm/src/dao/data"
+	"bronya.com/gin-gorm/src/dto"
 	"bronya.com/gin-gorm/src/global"
+	"bronya.com/gin-gorm/src/model"
 	"gorm.io/gorm"
 )
 
@@ -24,8 +25,17 @@ func NewUserDao() *UserDao {
 	return userDao
 }
 
-func (userDao *UserDao) SelectUserByUsernameAndPassword(username, password string) data.User {
-	var user data.User
-	userDao.database.Where("username = ? and password = ?", username, password).First(&user)
+func (userDao *UserDao) SelectUserByUsernameAndPassword(userLoginDto *dto.UserLoginDto) model.User {
+	var user model.User
+	userDao.database.Where("username = ? and password = ?", userLoginDto.Username, userLoginDto.Password).First(&user)
 	return user
+}
+
+func (userDao *UserDao) InsertUser(userInsertDto *dto.UserInsertDto) error {
+	user := userInsertDto.ToUser()
+	err := userDao.database.Save(&user).Error
+	if err == nil {
+		userInsertDto.ID = user.ID //! 接收 gorm 生成的主键 ID
+	}
+	return err
 }
