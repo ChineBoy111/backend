@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"bronya.com/gin-gorm/src/dao/data"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -12,7 +13,7 @@ func ConnMysql() (*gorm.DB, error) {
 
 	gormLogMod := gormLogger.Info
 
-	if viper.GetString("buildType") == "Release" {
+	if viper.GetString("build.type") == "Release" {
 		gormLogMod = gormLogger.Error
 	}
 

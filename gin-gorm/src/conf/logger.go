@@ -15,7 +15,7 @@ var logger *zap.SugaredLogger
 func NewLogger() *zap.SugaredLogger {
 	if logger == nil {
 		logLevel := zap.DebugLevel
-		if viper.GetString("buildType") == "Release" {
+		if viper.GetString("build.type") == "Release" {
 			logLevel = zap.InfoLevel
 		}
 
