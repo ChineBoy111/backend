@@ -1,8 +1,6 @@
 package data
 
-import (
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 // ! ==================== Data 数据对象 ====================
 

@@ -1,9 +1,9 @@
 package api
 
 import (
-	"bronya.com/gin-gorm/src/dto"
 	"bronya.com/gin-gorm/src/global"
 	"bronya.com/gin-gorm/src/service"
+	"bronya.com/gin-gorm/src/service/dto"
 	"bronya.com/gin-gorm/src/util"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -65,6 +65,9 @@ func (userApi UserApi) Login(ctx *gin.Context) {
 
 	token, _ := util.GenToken(user.ID, user.Username)
 	Ok(ctx, Resp{
-		Data: gin.H{"token": token},
+		Data: gin.H{
+			"token": token,
+			"user":  user,
+		},
 	})
 }

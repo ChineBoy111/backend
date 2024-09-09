@@ -11,8 +11,6 @@
 
 ![三层架构](./asset/schema.png)
 
-- API
-- Service
-- DAO
-
-
+- api/
+- service/dto/
+- dao/data/

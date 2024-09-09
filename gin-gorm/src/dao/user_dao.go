@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"bronya.com/gin-gorm/src/data"
+	"bronya.com/gin-gorm/src/dao/data"
 	"bronya.com/gin-gorm/src/global"
 	"gorm.io/gorm"
 )

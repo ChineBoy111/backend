@@ -1,8 +1,6 @@
 # api
 
-api 路由函数
-
-> api 等价于 controller
+API, Application Program Interface 应用程序接口
 
 ## 结构体标签
 
@@ -58,7 +56,7 @@ func DeepEqual(x, y interface{}) bool // 通过反射，判断 x, y 是否深度
 
 ## 自定义字段校验器
 
-数据传输对象 [UserLoginDto](../data/user.go)
+数据传输对象 [UserLoginDto](../model/user.go)
 
 ```go
 type UserLoginDto struct {

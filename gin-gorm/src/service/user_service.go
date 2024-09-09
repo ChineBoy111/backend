@@ -2,8 +2,8 @@ package service
 
 import (
 	"bronya.com/gin-gorm/src/dao"
-	"bronya.com/gin-gorm/src/data"
-	"bronya.com/gin-gorm/src/dto"
+	"bronya.com/gin-gorm/src/dao/data"
+	"bronya.com/gin-gorm/src/service/dto"
 	"errors"
 )
 
