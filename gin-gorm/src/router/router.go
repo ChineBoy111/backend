@@ -4,6 +4,7 @@ import (
 	"bronya.com/gin-gorm/src/api"
 	_ "bronya.com/gin-gorm/src/docs"
 	"bronya.com/gin-gorm/src/global"
+	"bronya.com/gin-gorm/src/middleware"
 	"context"
 	"errors"
 	"fmt"
@@ -17,13 +18,9 @@ import (
 	"time"
 )
 
-// ! rg     | router group
-// ! publicRouteGroup  | public router group
-// ! authorizedRouteGroup | authorized route group
-
 var publicRouteGroup, authorizedRouteGroup *gin.RouterGroup
 
-// StartRouter 注册路由，启动路由器
+// StartRouter 创建路由组（根路由组、子路由组），启动路由器
 func StartRouter() {
 
 	//! 创建一个接收 os 信号的上下文 notifyCtx
@@ -31,15 +28,20 @@ func StartRouter() {
 	notifyCtx, notifyCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer notifyCancel()
 
+	//! 创建 gin 默认引擎
 	engine := gin.Default()
+
+	//! 创建根路由组
 	publicRouteGroup = engine.Group("/api/v1/public")
 	authorizedRouteGroup = engine.Group("/api/v1")
+	//! 创建子路组
+	UserRouteGroup() // 创建 user 子路由组
 
-	//* 注册自定义字段校验器
+	//! 注册自定义字段校验器
 	api.RegisterCustomValidator()
 
-	//* 注册路由组
-	RegisterUserRouteGroup() // 注册 user 路由组
+	//! 使用 gin 跨域中间件
+	engine.Use(middleware.Cors())
 
 	//* 访问 api 文档 http://127.0.0.1:3333/swagger/index.html
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

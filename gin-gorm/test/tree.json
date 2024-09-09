@@ -1,0 +1,20 @@
+{
+  "dirname": "src",
+  "subdirs": [
+    { "dirname": "api" },
+    { "dirname": "cmd" },
+    { "dirname": "conf" },
+    {
+      "dirname": "dao",
+      "subdirs": [{ "dirname": "data" }]
+    },
+    { "dirname": "global" },
+    { "dirname": "middleware" },
+    { "dirname": "router" },
+    {
+      "dirname": "service",
+      "subdirs": [{ "dirname": "dto" }]
+    },
+    { "dirname": "util" }
+  ]
+}

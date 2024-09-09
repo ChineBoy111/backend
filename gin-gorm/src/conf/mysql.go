@@ -1,7 +1,6 @@
 package conf
 
 import (
-	"bronya.com/gin-gorm/src/dao/data"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

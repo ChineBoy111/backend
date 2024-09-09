@@ -19,6 +19,7 @@ get:
 	go get -u gorm.io/driver/mysql
 	go get -u github.com/redis/go-redis/v9
 	go get -u github.com/golang-jwt/jwt/v5
+	go get -u github.com/gin-contrib/cors
 	@echo "====================   Install    ===================="
 	go install github.com/swaggo/swag/cmd/swag@latest
 

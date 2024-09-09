@@ -48,7 +48,8 @@ api 注释
 // @Failure     失败时的响应状态码   {string/object}   数据类型   描述
 // @Router      路由 [请求方法]
 
-// 例
+// ==================== 例 ====================
+
 // @Tag         用户 api
 // @Summary     用户登录，简略
 // @Description 用户登录，详细
@@ -60,4 +61,3 @@ api 注释
 // @Failure     401   {string}   string   "登录失败"
 // @Router      /api/v1/public/user/login [post]
 ```
-

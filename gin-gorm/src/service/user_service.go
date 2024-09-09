@@ -11,12 +11,13 @@ type UserService struct {
 	UserDao *dao.UserDao
 }
 
+// ! UserService 单例
 var userService *UserService
 
 func NewUserService() *UserService {
 	if userService == nil {
 		userService = &UserService{
-			UserDao: dao.NewUserDao(),
+			UserDao: dao.NewUserDao(), //! 组合 UserDao
 		}
 	}
 	return userService

@@ -8,13 +8,11 @@ import (
 
 // RegisterCustomValidator 注册自定义字段校验器
 // ! 使用自定义字段校验器
-// ```go
 //
 //	type StructName struct {
 //	    FieldName string `json:"name" binding:"not_admin"`
 //	}
 //
-// ```
 // ! 类型断言 typeX, ok := x.(Type); ok 表示类型断言是否成功
 func RegisterCustomValidator() {
 	if customValidator, ok /* 类型断言是否成功 */ := binding.Validator.Engine().(*validator.Validate); ok {

@@ -10,7 +10,7 @@ import (
 )
 
 type UserApi struct {
-	UserService *service.UserService
+	UserService *service.UserService //! 组合 UserService
 }
 
 // ! UserApi 单例
@@ -36,7 +36,7 @@ func NewUserApi() *UserApi {
 // @Success     200   {string}   string   "登录成功"
 // @Failure     401   {string}   string   "登录失败"
 // @Router      /api/v1/public/user/login [post]
-func (userApi UserApi) Login(ctx *gin.Context) {
+func (userApi UserApi) Login(ctx *gin.Context) { //! 不使用指针接收
 	// ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
 	// 	   "msg": "Login ok",
 	// } /* gin.H 是 map[string]any 的别名 */)

@@ -24,7 +24,7 @@ func Start() {
 	}
 	global.RedisCli = redisCli
 
-	router.StartRouter() //! 注册路由，启动路由器
+	router.StartRouter() //! 创建路由组，启动路由器
 }
 
 func Done() {
