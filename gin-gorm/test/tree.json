@@ -1,6 +1,6 @@
 {
   "dirname": "src",
-  "subdirs": [
+  "subDirs": [
     { "dirname": "api" },
     { "dirname": "cmd" },
     { "dirname": "conf" },

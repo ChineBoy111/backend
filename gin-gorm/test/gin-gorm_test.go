@@ -82,7 +82,7 @@ func TestBuildByMap(t *testing.T) {
 
 type Dir struct {
 	DirName string `json:"dirname"`
-	SubDirs []Dir  `json:"subdirs"`
+	SubDirs []Dir  `json:"subDirs"`
 }
 
 func (dir *Dir) loadJson() {
