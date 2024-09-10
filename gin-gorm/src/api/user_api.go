@@ -6,7 +6,12 @@ import (
 	"bronya.com/gin-gorm/src/service"
 	"bronya.com/gin-gorm/src/util"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
+)
+
+const (
+	USER_LOGIN_ERR = iota + 1000
+	USER_INSERT_ERR
+	USER_SELECT_ERR
 )
 
 type UserApi struct {
@@ -49,17 +54,18 @@ func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 	validationErrs := ctx.ShouldBind(&userLoginDto) //! 自动解析并绑定
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		ClientErr(ctx, Resp{
-			//! 响应可读的错误消息
-			Msg: ParseValidationErrors(validationErrs.(validator.ValidationErrors), &userLoginDto).Error(),
+		Err(ctx, Resp{
+			Code: USER_LOGIN_ERR,
+			Msg:  validationErrs.Error(),
 		})
 		return
 	}
 
 	user, err := userApi.UserService.Login(&userLoginDto)
 	if err != nil {
-		ClientErr(ctx, Resp{
-			Msg: err.Error(),
+		Err(ctx, Resp{
+			Code: USER_LOGIN_ERR,
+			Msg:  err.Error(),
 		})
 		return
 	}
@@ -75,24 +81,52 @@ func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 
 func (userApi UserApi) InsertUser(ctx *gin.Context) {
 	var userInsertDto dto.UserInsertDto
+	//* ctx.ShouldBind(any)
 	validationErrs := ctx.ShouldBind(&userInsertDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		ClientErr(ctx, Resp{
-			Msg: ParseValidationErrors(validationErrs.(validator.ValidationErrors), &userInsertDto).Error(),
+		Err(ctx, Resp{
+			Code: USER_INSERT_ERR,
+			Msg:  validationErrs.Error(),
 		})
 		return
 	}
 
 	err := userApi.UserService.InsertUser(&userInsertDto)
 	if err != nil {
-		ClientErr(ctx, Resp{
-			Msg: err.Error(),
+		Err(ctx, Resp{
+			Code: USER_INSERT_ERR,
+			Msg:  err.Error(),
 		})
 		return
 	}
 
 	Ok(ctx, Resp{
 		Data: userInsertDto,
+	})
+}
+
+func (userApi UserApi) SelectUserById(ctx *gin.Context) {
+	var commonIdDto dto.CommonIdDto
+	//* ctx.ShouldBindUri(any)
+	validationErrs := ctx.ShouldBindUri(&commonIdDto)
+	if validationErrs != nil {
+		global.Logger.Errorln(validationErrs.Error())
+		Err(ctx, Resp{
+			Code: USER_SELECT_ERR,
+			Msg:  validationErrs.Error(),
+		})
+		return
+	}
+	user, err := userApi.UserService.SelectUserById(&commonIdDto)
+	if err != nil {
+		Err(ctx, Resp{
+			Code: USER_SELECT_ERR,
+			Msg:  err.Error(),
+		})
+		return
+	}
+	Ok(ctx, Resp{
+		Data: user,
 	})
 }

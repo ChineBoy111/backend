@@ -61,6 +61,6 @@ func (userDao *UserDao) SelectUserByUsername(username string) (model.User, error
 
 func (userDao *UserDao) SelectUserById(id uint) (model.User, error) {
 	var user model.User
-	err := userDao.database.Model(&model.User{}).Where("id = ?", id).First(&user).Error
+	err := userDao.database.Model(&model.User{}).First(&user, id).Error
 	return user, err
 }

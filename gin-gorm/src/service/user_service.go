@@ -35,3 +35,7 @@ func (userService *UserService) InsertUser(userInsertDto *dto.UserInsertDto) err
 	}
 	return userService.UserDao.InsertUser(userInsertDto)
 }
+
+func (userService *UserService) SelectUserById(commonIdDto *dto.CommonIdDto) (model.User, error) {
+	return userService.UserDao.SelectUserById(commonIdDto.ID)
+}

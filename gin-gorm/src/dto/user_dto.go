@@ -12,19 +12,19 @@ type UserLoginDto struct {
 	//* binding:"required,not_admin"
 	//! required  - 必填字段，绑定时如果 name 为空则报错
 	//! not_admin - 自定义字段校验器 ../../model/validator.go
-	Username string `json:"username" binding:"required,not_admin" msg:"username error" required_err:"username can't be empty" not_admin_err:"username can't be admin"`
-	Password string `json:"password" binding:"required" msg:"password can't be empty"`
+	Username string `json:"username" binding:"required,not_admin"`
+	Password string `json:"password" binding:"required"`
 }
 
 type UserInsertDto struct {
 	ID uint //! 接收 gorm 生成的主键 ID
 	//* form:"username"
 	//! username - HTML 表单中，input 标签的 id 为 username
-	Username string `json:"username" form:"username" binding:"required" msg:"username can't be empty"`
-	Password string `json:"password,omitempty" form:"password" binding:"required" msg:"password can't be empty"`
-	Name     string `json:"name" form:"name"`
-	Phone    string `json:"phone" form:"phone"`
-	Email    string `json:"email" form:"email"`
+	Username string `json:"username"           form:"username" binding:"required"`
+	Password string `json:"password,omitempty" form:"password" binding:"required"`
+	Name     string `json:"name"               form:"name"`
+	Phone    string `json:"phone"              form:"phone"`
+	Email    string `json:"email"              form:"email"`
 	Avatar   string
 }
 
