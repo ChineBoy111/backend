@@ -4,6 +4,7 @@ import (
 	"bronya.com/gin-gorm/src/dto"
 	"bronya.com/gin-gorm/src/global"
 	"bronya.com/gin-gorm/src/model"
+	"errors"
 	"gorm.io/gorm"
 )
 
@@ -25,12 +26,6 @@ func NewUserDao() *UserDao {
 	return userDao
 }
 
-func (userDao *UserDao) SelectUserByUsernameAndPassword(username, password string) model.User {
-	var user model.User
-	userDao.database.Model(&model.User{}).Where("username = ? and password = ?", username, password).First(&user)
-	return user
-}
-
 func (userDao *UserDao) InsertUser(userInsertDto *dto.UserInsertDto) error {
 	user := userInsertDto.ToUser()
 	err := userDao.database.Model(&model.User{}).Save(&user).Error
@@ -40,8 +35,32 @@ func (userDao *UserDao) InsertUser(userInsertDto *dto.UserInsertDto) error {
 	return err
 }
 
-func (userDao *UserDao) SelectUserByUsername(username string) model.User {
+func (userDao *UserDao) SelectUserByUsernameAndPassword(username, password string) (model.User, error) {
 	var user model.User
-	userDao.database.Model(&model.User{}).Where("username = ?", username).First(&user)
-	return user
+	err := userDao.database.Model(&model.User{}).Where("username = ?", username).First(&user).Error
+	if err != nil {
+		return user, err
+	}
+	if user.ID == 0 || password != user.Password {
+		return user, errors.New("username or password error")
+	}
+	return user, nil
+}
+
+func (userDao *UserDao) SelectUserByUsername(username string) (model.User, error) {
+	var user model.User
+	err := userDao.database.Model(&model.User{}).Where("username = ?", username).First(&user).Error
+	if err != nil {
+		return user, err
+	}
+	if user.ID == 0 {
+		return user, errors.New("username error")
+	}
+	return user, nil
+}
+
+func (userDao *UserDao) SelectUserById(id uint) (model.User, error) {
+	var user model.User
+	err := userDao.database.Model(&model.User{}).Where("id = ?", id).First(&user).Error
+	return user, err
 }

@@ -22,18 +22,16 @@ func NewUserService() *UserService {
 	}
 	return userService
 }
+
 func (userService *UserService) Login(userLoginDto *dto.UserLoginDto) (model.User, error) {
 	var err error
-	user := userService.UserDao.SelectUserByUsernameAndPassword(userLoginDto.Username, userLoginDto.Password)
-	if user.ID == 0 {
-		err = errors.New("username or password error")
-	}
+	user, err := userService.UserDao.SelectUserByUsernameAndPassword(userLoginDto.Username, userLoginDto.Password)
 	return user, err
 }
 
-func (userService *UserService) AddUser(userInsertDto *dto.UserInsertDto) error {
-	if userService.UserDao.SelectUserByUsername(userInsertDto.Username).ID != 0 {
-		return errors.New("username already exists")
+func (userService *UserService) InsertUser(userInsertDto *dto.UserInsertDto) error {
+	if _, err := userService.UserDao.SelectUserByUsername(userInsertDto.Username); err == nil {
+		return errors.New("username exists")
 	}
 	return userService.UserDao.InsertUser(userInsertDto)
 }

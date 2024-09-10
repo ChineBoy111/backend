@@ -25,7 +25,7 @@ func NewUserApi() *UserApi {
 	return userApi
 }
 
-// Login api 的 swagger 注释
+// UserLogin api 的 swagger 注释
 // @Tag         用户 api
 // @Summary     用户登录，简略
 // @Description 用户登录，详细
@@ -36,7 +36,7 @@ func NewUserApi() *UserApi {
 // @Success     200   {string}   string   "登录成功"
 // @Failure     401   {string}   string   "登录失败"
 // @Router      /api/v1/public/user/login [post]
-func (userApi UserApi) Login(ctx *gin.Context) { //! 不使用指针接收
+func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 	// ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
 	// 	   "msg": "Login ok",
 	// } /* gin.H 是 map[string]any 的别名 */)
@@ -53,6 +53,7 @@ func (userApi UserApi) Login(ctx *gin.Context) { //! 不使用指针接收
 			//! 响应可读的错误消息
 			Msg: ParseValidationErrors(validationErrs.(validator.ValidationErrors), &userLoginDto).Error(),
 		})
+		return
 	}
 
 	user, err := userApi.UserService.Login(&userLoginDto)
@@ -69,5 +70,29 @@ func (userApi UserApi) Login(ctx *gin.Context) { //! 不使用指针接收
 			"token": token,
 			"user":  user,
 		},
+	})
+}
+
+func (userApi UserApi) InsertUser(ctx *gin.Context) {
+	var userInsertDto dto.UserInsertDto
+	validationErrs := ctx.ShouldBind(&userInsertDto)
+	if validationErrs != nil {
+		global.Logger.Errorln(validationErrs.Error())
+		ClientErr(ctx, Resp{
+			Msg: ParseValidationErrors(validationErrs.(validator.ValidationErrors), &userInsertDto).Error(),
+		})
+		return
+	}
+
+	err := userApi.UserService.InsertUser(&userInsertDto)
+	if err != nil {
+		ClientErr(ctx, Resp{
+			Msg: err.Error(),
+		})
+		return
+	}
+
+	Ok(ctx, Resp{
+		Data: userInsertDto,
 	})
 }

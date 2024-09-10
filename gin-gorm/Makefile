@@ -28,8 +28,8 @@ tidy:
 
 build:
 	go build -o ./main ./src/main.go
-	# set GOOS=darwin  && set GOARCH=arm64 && go build -o ./main ./src/main.go
 	# set GOOS=linux   && set GOARCH=amd64 && go build -o ./main ./src/main.go
+	# set GOOS=darwin  && set GOARCH=arm64 && go build -o ./main ./src/main.go
 	# set GOOS=windows && set GOARCH=amd64 && go build -o ./main ./src/main.go
 
 clean:
