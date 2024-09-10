@@ -13,6 +13,7 @@ const (
 	USER_INSERT_ERR
 	USER_SELECT_BY_ID_ERR
 	USER_SELECT_BY_PAGE_ERR
+	USER_UPDATE_ERR
 )
 
 type UserApi struct {
@@ -44,7 +45,7 @@ func NewUserApi() *UserApi {
 // @Router      /api/v1/public/user/login [post]
 func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 	//// ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
-	//// 	   "msg": "Login ok",
+	//// 	   "msg": "SelectUserByUsernameAndPassword ok",
 	//// } /* gin.H 是 map[string]any 的别名 */)
 
 	var userLoginDto dto.UserLoginDto
@@ -62,7 +63,7 @@ func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 		return
 	}
 
-	user, err := userApi.UserService.Login(&userLoginDto)
+	user, err := userApi.UserService.SelectUserByUsernameAndPassword(&userLoginDto)
 	if err != nil {
 		Err(ctx, Resp{
 			Code: USER_LOGIN_ERR,
@@ -132,7 +133,7 @@ func (userApi UserApi) SelectUserById(ctx *gin.Context) {
 	})
 }
 
-func (userApi UserApi) SelectUserByPage(ctx *gin.Context) {
+func (userApi UserApi) SelectPaginatedUser(ctx *gin.Context) {
 	var paginateDto dto.PaginateDto
 	//* ctx.ShouldBind(any)
 	validationErrs := ctx.ShouldBind(&paginateDto)
@@ -144,7 +145,7 @@ func (userApi UserApi) SelectUserByPage(ctx *gin.Context) {
 		})
 		return
 	}
-	userArr, total, err := userApi.UserService.SelectUserByPage(&paginateDto)
+	userArr, total, err := userApi.UserService.SelectPaginatedUser(&paginateDto)
 	if err != nil {
 		Err(ctx, Resp{
 			Code: USER_SELECT_BY_PAGE_ERR,
@@ -155,5 +156,32 @@ func (userApi UserApi) SelectUserByPage(ctx *gin.Context) {
 	Ok(ctx, Resp{
 		Data:  userArr,
 		Total: total,
+	})
+}
+
+func (userApi UserApi) UpdateUser(ctx *gin.Context) {
+	var userUpdateDto dto.UserUpdateDto
+	validationErrs := ctx.ShouldBindUri(&userUpdateDto)
+	if validationErrs != nil {
+		global.Logger.Errorln(validationErrs.Error())
+		Err(ctx, Resp{Code: USER_UPDATE_ERR, Msg: validationErrs.Error()})
+		return
+	}
+	validationErrs = ctx.ShouldBind(&userUpdateDto)
+	if validationErrs != nil {
+		global.Logger.Errorln(validationErrs.Error())
+		Err(ctx, Resp{Code: USER_UPDATE_ERR, Msg: validationErrs.Error()})
+		return
+	}
+	err := userApi.UserService.UpdateUser(&userUpdateDto)
+	if err != nil {
+		Err(ctx, Resp{
+			Code: USER_UPDATE_ERR,
+			Msg:  err.Error(),
+		})
+		return
+	}
+	Ok(ctx, Resp{
+		Msg: "Update ok",
 	})
 }

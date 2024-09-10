@@ -28,12 +28,26 @@ type UserInsertDto struct {
 	Avatar   string
 }
 
-func (userInsertDto *UserInsertDto) ToUser() data.User {
-	var user data.User
+func (userInsertDto *UserInsertDto) AssignToUser(user *data.User) {
 	user.Username = userInsertDto.Username
 	user.Password = userInsertDto.Password
 	user.Name = userInsertDto.Name
 	user.Phone = userInsertDto.Phone
 	user.Email = userInsertDto.Email
-	return user
+}
+
+type UserUpdateDto struct {
+	ID       uint   `json:"id"       form:"id"       uri:"id" binding:"required"`
+	Username string `json:"username" form:"username"`
+	Name     string `json:"name"     form:"name"`
+	Phone    string `json:"phone"    form:"phone"`
+	Email    string `json:"email"    form:"email"`
+}
+
+func (userUpdateDto *UserUpdateDto) AssignToUser(user *data.User) {
+	user.ID = userUpdateDto.ID
+	user.Username = userUpdateDto.Username
+	user.Name = userUpdateDto.Name
+	user.Phone = userUpdateDto.Phone
+	user.Email = userUpdateDto.Email
 }

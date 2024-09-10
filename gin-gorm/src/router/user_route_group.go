@@ -19,6 +19,7 @@ func UserRouteGroup() {
 	{ //? authorizedUserRouteGroup
 		authorizedUserRouteGroup.GET("/:id", userApi.SelectUserById)
 		authorizedUserRouteGroup.POST("", userApi.InsertUser)
-		authorizedUserRouteGroup.POST("/page", userApi.SelectUserByPage)
+		authorizedUserRouteGroup.POST("/page", userApi.SelectPaginatedUser)
+		authorizedUserRouteGroup.PUT("/:id", userApi.UpdateUser)
 	}
 }

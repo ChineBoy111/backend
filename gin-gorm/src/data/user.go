@@ -10,10 +10,10 @@ type User struct {
 	//* UpdatedAt 更新时间
 	//* DeletedAt 删除时间、是否删除
 	gorm.Model
-	Username string `gorm:"size:64;not null"`  // 用户名，非空
-	Password string `gorm:"size:255;not null"` // 密码，非空
-	Name     string `gorm:"size:128"`          // 姓名
-	Phone    string `gorm:"size:11"`           // 电话
-	Email    string `gorm:"size:128"`          // 邮箱
-	Avatar   string `gorm:"size:255"`          // 头像
+	Username string `json:"username" gorm:"size:64;not null"`  // 用户名：非空
+	Password string `json:"-"        gorm:"size:255;not null"` // 密码：非空、json 编解码时忽略该字段
+	Name     string `json:"name"     gorm:"size:128"`          // 姓名
+	Phone    string `json:"phone"    gorm:"size:11"`           // 电话
+	Email    string `json:"email"    gorm:"size:128"`          // 邮箱
+	Avatar   string `json:"avatar"   gorm:"size:255"`          // 头像
 }

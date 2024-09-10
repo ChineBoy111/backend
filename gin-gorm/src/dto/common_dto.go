@@ -3,7 +3,7 @@ package dto
 import "github.com/spf13/viper"
 
 type IdDto struct {
-	ID uint `json:"id" form:"id" uri:"id"`
+	ID uint `json:"id" form:"id" uri:"id" binding:"required"`
 }
 
 type PaginateDto struct {

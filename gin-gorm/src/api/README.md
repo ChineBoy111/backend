@@ -25,9 +25,9 @@ type User struct {
 
 ```go
 type Resp struct {
-	//! -         json 编解码时，忽略该字段
+	//! -         json 编解码时忽略该字段
 	//! code      json 中的字段名为 code
-	//! omitempty 如果该字段为空，则 json 编解码时，忽略该字段
+	//! omitempty 如果该字段为空，则 json 编解码时忽略该字段
 	Status int    `json:"-"`
 	Code   int    `json:"code,omitempty"`
 	Msg    string `json:"msg,omitempty"`
