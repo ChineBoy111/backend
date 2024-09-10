@@ -11,7 +11,8 @@ import (
 const (
 	USER_LOGIN_ERR = iota + 1000
 	USER_INSERT_ERR
-	USER_SELECT_ERR
+	USER_SELECT_BY_ID_ERR
+	USER_SELECT_BY_PAGE_ERR
 )
 
 type UserApi struct {
@@ -42,9 +43,9 @@ func NewUserApi() *UserApi {
 // @Failure     401   {string}   string   "登录失败"
 // @Router      /api/v1/public/user/login [post]
 func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
-	// ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
-	// 	   "msg": "Login ok",
-	// } /* gin.H 是 map[string]any 的别名 */)
+	//// ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
+	//// 	   "msg": "Login ok",
+	//// } /* gin.H 是 map[string]any 的别名 */)
 
 	var userLoginDto dto.UserLoginDto
 	//* ctx.ShouldBind 检查请求方式 GET, POST, ... 和 Content-Type 以自动解析并绑定
@@ -107,13 +108,13 @@ func (userApi UserApi) InsertUser(ctx *gin.Context) {
 }
 
 func (userApi UserApi) SelectUserById(ctx *gin.Context) {
-	var commonIdDto dto.CommonIdDto
+	var commonIdDto dto.IdDto
 	//* ctx.ShouldBindUri(any)
 	validationErrs := ctx.ShouldBindUri(&commonIdDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
 		Err(ctx, Resp{
-			Code: USER_SELECT_ERR,
+			Code: USER_SELECT_BY_ID_ERR,
 			Msg:  validationErrs.Error(),
 		})
 		return
@@ -121,12 +122,38 @@ func (userApi UserApi) SelectUserById(ctx *gin.Context) {
 	user, err := userApi.UserService.SelectUserById(&commonIdDto)
 	if err != nil {
 		Err(ctx, Resp{
-			Code: USER_SELECT_ERR,
+			Code: USER_SELECT_BY_ID_ERR,
 			Msg:  err.Error(),
 		})
 		return
 	}
 	Ok(ctx, Resp{
 		Data: user,
+	})
+}
+
+func (userApi UserApi) SelectUserByPage(ctx *gin.Context) {
+	var paginateDto dto.PaginateDto
+	//* ctx.ShouldBind(any)
+	validationErrs := ctx.ShouldBind(&paginateDto)
+	if validationErrs != nil {
+		global.Logger.Errorln(validationErrs.Error())
+		Err(ctx, Resp{
+			Code: USER_SELECT_BY_PAGE_ERR,
+			Msg:  validationErrs.Error(),
+		})
+		return
+	}
+	userArr, total, err := userApi.UserService.SelectUserByPage(&paginateDto)
+	if err != nil {
+		Err(ctx, Resp{
+			Code: USER_SELECT_BY_PAGE_ERR,
+			Msg:  err.Error(),
+		})
+		return
+	}
+	Ok(ctx, Resp{
+		Data:  userArr,
+		Total: total,
 	})
 }

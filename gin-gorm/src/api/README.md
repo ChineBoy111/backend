@@ -11,12 +11,12 @@ API, Application Program Interface 应用程序接口
 ```go
 type User struct {
 	//! primarykey  主键
-	ID      uint `gorm:"primarykey"`
 	//! index       为 users 表的 deleted 字段创建索引
-	Deleted bool `gorm:"index"`
 	//! size:32     32 字节
 	//! not null    非空
 	//! column:name users 表中的字段名为 name
+	ID       uint   `gorm:"primarykey"`
+	Deleted  bool   `gorm:"index"`
 	Username string `gorm:"size:32;not null;column:name"`
 }
 ```
@@ -24,16 +24,15 @@ type User struct {
 例 json 标签
 
 ```go
-type RespBody struct {
-	//! -           json 编解码时，忽略该字段
-	Status int `json:"-"`
-	//! code        json 中的字段名为 code
-	//! omitempty   如果该字段为空，则 json 编解码时，忽略该字段
-	Code int `json:"code,omitempty"`
-	//* msg         json 中的字段名为 msg
-	Msg string `json:"msg,omitempty"`
-	//* model        json 中的字段名为 model
-	Data any `json:"model,omitempty"`
+type Resp struct {
+	//! -         json 编解码时，忽略该字段
+	//! code      json 中的字段名为 code
+	//! omitempty 如果该字段为空，则 json 编解码时，忽略该字段
+	Status int    `json:"-"`
+	Code   int    `json:"code,omitempty"`
+	Msg    string `json:"msg,omitempty"`
+	Data   any    `json:"data,omitempty"`
+	Total  int64  `json:"total,omitempty"`
 }
 ```
 
@@ -56,24 +55,23 @@ func DeepEqual(x, y interface{}) bool // 通过反射，判断 x, y 是否深度
 
 ## 自定义字段校验器
 
-数据传输对象 [UserLoginDto](../model/user.go)
+数据传输对象 [UserLoginDto](../dto/user_dto.go)
 
 ```go
 type UserLoginDto struct {
-	//* json:"name"
-	//! name      json 中的字段名为 name
+	//* json:"username"
+	//! username  - json 中的字段名为 username
 	//* binding:"required,not_admin"
-	//! required  必填字段，绑定时如果 name 为空则报错
-	//! not_admin     自定义字段校验器 ../../model/validator.go
-	Username string `json:"username" binding:"required,not_admin" msg:"用户名错误" required_err:"用户名不能为空" not_admin_err:"用户名非法"`
-	Password string `json:"password" binding:"required" msg:"密码错误"`
+	//! required  - 必填字段，绑定时如果 name 为空则报错
+	//! not_admin - 自定义字段校验器 ../../data/validator.go
+	Username string `json:"username" binding:"required,not_admin"`
+	Password string `json:"password" binding:"required"`
 }
 ```
 
 自定义字段校验器 [validator](./validator.go)
 
 ```go
-
 // RegisterCustomValidator 注册自定义字段校验器
 // ! 使用自定义字段校验器
 //

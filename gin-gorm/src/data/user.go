@@ -1,8 +1,8 @@
-package model
+package data
 
 import "gorm.io/gorm"
 
-// ! ==================== Model 数据模型 ====================
+// ! ==================== Data 数据对象 ====================
 
 type User struct {
 	//* ID

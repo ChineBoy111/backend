@@ -10,7 +10,7 @@ import (
 // ! 使用自定义字段校验器
 //
 //	type StructName struct {
-//	    FieldName string `json:"name" binding:"not_admin"`
+//	    FieldName string `binding:"not_admin"`
 //	}
 //
 // ! 类型断言 typeX, ok := x.(Type); ok 表示类型断言是否成功

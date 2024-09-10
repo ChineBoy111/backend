@@ -5,7 +5,7 @@
 3. http 框架 [gin](https://github.com/gin-gonic/gin)
 4. orm 框架和 mysql 驱动 [gorm](https://github.com/go-gorm/gorm)
 5. go 的 redis 客户端 [go-redis](https://github.com/redis/go-redis)
-6. jwt, json web tokens 的 go 实现 [golang-jwt](https://github.com/golang-jwt/jwt)
+6. jwt, json web tokens 的 go 实现 [jwt](https://github.com/golang-jwt/jwt)
 7. gin 跨域中间件 [cors](https://github.com/gin-contrib/cors)
 
 ## 三层架构

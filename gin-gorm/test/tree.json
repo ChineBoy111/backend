@@ -5,10 +5,10 @@
     { "dirname": "cmd" },
     { "dirname": "conf" },
     { "dirname": "dao" },
+    { "dirname": "data" },
     { "dirname": "dto" },
     { "dirname": "global" },
     { "dirname": "middleware" },
-    { "dirname": "model" },
     { "dirname": "router" },
     { "dirname": "service" },
     { "dirname": "util" }

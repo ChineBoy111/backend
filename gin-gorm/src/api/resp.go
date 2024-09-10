@@ -8,14 +8,13 @@ import (
 
 type Resp struct {
 	//! -           json 编解码时，忽略该字段
-	Status int `json:"-"`
 	//! code        json 中的字段名为 code
 	//! omitempty   如果该字段为空，则 json 编解码时，忽略该字段
-	Code int `json:"code,omitempty"`
-	//  msg         json 中的字段名为 msg
-	Msg string `json:"msg,omitempty"`
-	//  model        json 中的字段名为 model
-	Data any `json:"model,omitempty"`
+	Status int    `json:"-"`
+	Code   int    `json:"code,omitempty"`
+	Msg    string `json:"msg,omitempty"`
+	Data   any    `json:"data,omitempty"`
+	Total  int64  `json:"total,omitempty"`
 }
 
 func (resp Resp) IsEmpty() bool {

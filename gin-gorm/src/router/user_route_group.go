@@ -17,7 +17,8 @@ func UserRouteGroup() {
 	//* 创建 authorized 子路由组 authorizedUserRouteGroup
 	authorizedUserRouteGroup := authorizedRouteGroup.Group("/user" /* 路由前缀 */)
 	{ //? authorizedUserRouteGroup
-		authorizedUserRouteGroup.POST("", userApi.InsertUser)
 		authorizedUserRouteGroup.GET("/:id", userApi.SelectUserById)
+		authorizedUserRouteGroup.POST("", userApi.InsertUser)
+		authorizedUserRouteGroup.POST("/page", userApi.SelectUserByPage)
 	}
 }

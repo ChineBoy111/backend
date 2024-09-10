@@ -1,21 +1,22 @@
 package router
 
 import (
-	"bronya.com/gin-gorm/src/api"
-	_ "bronya.com/gin-gorm/src/docs"
-	"bronya.com/gin-gorm/src/global"
-	"bronya.com/gin-gorm/src/middleware"
 	"context"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"bronya.com/gin-gorm/src/api"
+	_ "bronya.com/gin-gorm/src/docs"
+	"bronya.com/gin-gorm/src/global"
+	"bronya.com/gin-gorm/src/middleware"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var publicRouteGroup, authorizedRouteGroup *gin.RouterGroup
@@ -67,6 +68,20 @@ func StartRouter() {
 	}()
 
 	<-notifyCtx.Done()
+
+	//! 在新协程中启动服务器，主协程不会阻塞，继续运行
+	//// go func() {
+	////     cmd.Start()
+	//// }()
+
+	//// quitChan := make(chan os.Signal, 1)
+	//? kill    发送 syscall.SIGTERM
+	//? kill -2 发送 syscall.SIGINT (os.Interrupt)
+	//? kill -9 发送 syscall.SIGKILL 但不能被捕获
+
+	//! 将指定的 os 信号转发到 quitChan 通道
+	//// signal.Notify(quitChan, syscall.SIGINT /* os.Interrupt */, syscall.SIGTERM)
+	//// <-quitChan
 
 	//! 创建一个有超时时间的上下文 timeoutCtx
 	//! 超时时间到时，timeoutCtx 的 Done 通道关闭，可执行 <-timoutCtx.Done()

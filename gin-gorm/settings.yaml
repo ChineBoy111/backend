@@ -12,10 +12,14 @@ db:
   maxOpenConns: 0    # 最大连接数，默认 0，表示无限制
   connMaxLifetime: 0 # 最长连接时间，默认 0，表示无限制
 
+  paginate:
+    curr: 1   # 当前页号，从 1 开始，默认 1
+    limit: 10 # 每页记录数，默认 10
+
   redis:
     addr: 127.0.0.1:6379
     expiration: 600 # 单位 s
 
 jwt:
-  expiration: 1800 # 单位 s
+  expiration: 1800       # 单位 s
   signingKey: bronya.com # 签名密钥
