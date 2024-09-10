@@ -30,7 +30,8 @@ func (userDao *UserDao) InsertUser(userInsertDto *dto.UserInsertDto) error {
 	user := userInsertDto.ToUser()
 	err := userDao.database.Model(&data.User{}).Save(&user).Error
 	if err == nil {
-		userInsertDto.ID = user.ID //! 接收 gorm 生成的主键 ID
+		userInsertDto.ID = user.ID  //! 接收 gorm 生成的主键 ID
+		userInsertDto.Password = "" //! json 编解码时，忽略该字段
 	}
 	return err
 }
