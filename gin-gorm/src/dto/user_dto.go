@@ -19,7 +19,7 @@ type UserLoginDto struct {
 }
 
 type UserInsertDto struct {
-	ID       uint   //! 接收 gorm 生成的主键 ID
+	Id       uint   //! 接收 gorm 生成的主键 Id
 	Username string `json:"username"           form:"username" binding:"required"`
 	Password string `json:"password,omitempty" form:"password" binding:"required"`
 	Name     string `json:"name"               form:"name"`
@@ -37,7 +37,7 @@ func (userInsertDto *UserInsertDto) AssignToUser(user *data.User) {
 }
 
 type UserUpdateDto struct {
-	ID       uint   `json:"id"       form:"id"       uri:"id" binding:"required"`
+	Id       uint   `json:"id"       form:"id"       uri:"id" binding:"required"`
 	Username string `json:"username" form:"username"`
 	Name     string `json:"name"     form:"name"`
 	Phone    string `json:"phone"    form:"phone"`
@@ -45,7 +45,7 @@ type UserUpdateDto struct {
 }
 
 func (userUpdateDto *UserUpdateDto) AssignToUser(user *data.User) {
-	user.ID = userUpdateDto.ID
+	user.ID = userUpdateDto.Id
 	user.Username = userUpdateDto.Username
 	user.Name = userUpdateDto.Name
 	user.Phone = userUpdateDto.Phone

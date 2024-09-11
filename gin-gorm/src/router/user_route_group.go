@@ -19,7 +19,8 @@ func UserRouteGroup() {
 	{ //? authorizedUserRouteGroup
 		authorizedUserRouteGroup.GET("/:id", userApi.SelectUserById)
 		authorizedUserRouteGroup.POST("", userApi.InsertUser)
-		authorizedUserRouteGroup.POST("/page", userApi.SelectPaginatedUser)
+		authorizedUserRouteGroup.POST("/page", userApi.SelectPaginatedUsers)
 		authorizedUserRouteGroup.PUT("/:id", userApi.UpdateUser)
+		authorizedUserRouteGroup.DELETE("/:id", userApi.DeleteUserById)
 	}
 }

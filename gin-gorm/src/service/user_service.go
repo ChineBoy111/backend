@@ -23,9 +23,9 @@ func NewUserService() *UserService {
 	return userService
 }
 
-func (userService *UserService) SelectUserByUsernameAndPassword(userLoginDto *dto.UserLoginDto) (data.User, error) {
+func (userService *UserService) SelectUser(userLoginDto *dto.UserLoginDto) (data.User, error) {
 	var err error
-	user, err := userService.UserDao.SelectUserByUsernameAndPassword(userLoginDto)
+	user, err := userService.UserDao.SelectUser(userLoginDto)
 	return user, err
 }
 
@@ -36,17 +36,21 @@ func (userService *UserService) InsertUser(userInsertDto *dto.UserInsertDto) err
 	return userService.UserDao.InsertUser(userInsertDto)
 }
 
-func (userService *UserService) SelectUserById(commonIdDto *dto.IdDto) (data.User, error) {
-	return userService.UserDao.SelectUserById(commonIdDto.ID)
+func (userService *UserService) SelectUserById(idDto *dto.IdDto) (data.User, error) {
+	return userService.UserDao.SelectUserById(idDto.Id)
 }
 
-func (userService *UserService) SelectPaginatedUser(paginateDto *dto.PaginateDto) ([]data.User, int64, error) {
-	return userService.UserDao.SelectPaginatedUser(paginateDto)
+func (userService *UserService) SelectPaginatedUsers(paginateDto *dto.PaginateDto) ([]data.User, int64, error) {
+	return userService.UserDao.SelectPaginatedUsers(paginateDto)
 }
 
 func (userService *UserService) UpdateUser(userUpdateDto *dto.UserUpdateDto) error {
-	if userUpdateDto.ID <= 0 {
-		return errors.New("ID error")
+	if userUpdateDto.Id <= 0 {
+		return errors.New("Id error")
 	}
 	return userService.UserDao.UpdateUser(userUpdateDto)
+}
+
+func (userService *UserService) DeleteUserById(idDto *dto.IdDto) (data.User, error) {
+	return userService.UserDao.DeleteUserById(idDto.Id)
 }

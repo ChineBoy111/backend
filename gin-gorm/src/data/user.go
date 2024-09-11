@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 // ! ==================== Data 数据对象 ====================
 
 type User struct {
-	//* ID
+	//* Id
 	//* CreatedAt 创建时间
 	//* UpdatedAt 更新时间
 	//* DeletedAt 删除时间、是否删除

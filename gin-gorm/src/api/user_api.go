@@ -8,14 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	USER_LOGIN_ERR = iota + 1000
-	USER_INSERT_ERR
-	USER_SELECT_BY_ID_ERR
-	USER_SELECT_BY_PAGE_ERR
-	USER_UPDATE_ERR
-)
-
 type UserApi struct {
 	UserService *service.UserService //! 组合 UserService
 }
@@ -45,7 +37,7 @@ func NewUserApi() *UserApi {
 // @Router      /api/v1/public/user/login [post]
 func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 	//// ctx.AbortWithStatusJSON(http.StatusOK /* 200 */, gin.H{
-	//// 	   "msg": "SelectUserByUsernameAndPassword ok",
+	//// 	   "msg": "SelectUser ok",
 	//// } /* gin.H 是 map[string]any 的别名 */)
 
 	var userLoginDto dto.UserLoginDto
@@ -57,17 +49,15 @@ func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
 		Err(ctx, Resp{
-			Code: USER_LOGIN_ERR,
-			Msg:  validationErrs.Error(),
+			Msg: validationErrs.Error(),
 		})
 		return
 	}
 
-	user, err := userApi.UserService.SelectUserByUsernameAndPassword(&userLoginDto)
+	user, err := userApi.UserService.SelectUser(&userLoginDto)
 	if err != nil {
 		Err(ctx, Resp{
-			Code: USER_LOGIN_ERR,
-			Msg:  err.Error(),
+			Msg: err.Error(),
 		})
 		return
 	}
@@ -78,6 +68,7 @@ func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 			"token": token,
 			"user":  user,
 		},
+		Msg: "User Login OK",
 	})
 }
 
@@ -88,8 +79,7 @@ func (userApi UserApi) InsertUser(ctx *gin.Context) {
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
 		Err(ctx, Resp{
-			Code: USER_INSERT_ERR,
-			Msg:  validationErrs.Error(),
+			Msg: validationErrs.Error(),
 		})
 		return
 	}
@@ -97,65 +87,65 @@ func (userApi UserApi) InsertUser(ctx *gin.Context) {
 	err := userApi.UserService.InsertUser(&userInsertDto)
 	if err != nil {
 		Err(ctx, Resp{
-			Code: USER_INSERT_ERR,
-			Msg:  err.Error(),
+			Msg: err.Error(),
 		})
 		return
 	}
 
 	Ok(ctx, Resp{
 		Data: userInsertDto,
+		Msg:  "Insert User OK",
 	})
 }
 
 func (userApi UserApi) SelectUserById(ctx *gin.Context) {
-	var commonIdDto dto.IdDto
+	var idDto dto.IdDto
 	//* ctx.ShouldBindUri(any)
-	validationErrs := ctx.ShouldBindUri(&commonIdDto)
+	validationErrs := ctx.ShouldBindUri(&idDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
 		Err(ctx, Resp{
-			Code: USER_SELECT_BY_ID_ERR,
-			Msg:  validationErrs.Error(),
+			Msg: validationErrs.Error(),
 		})
 		return
 	}
-	user, err := userApi.UserService.SelectUserById(&commonIdDto)
+	user, err := userApi.UserService.SelectUserById(&idDto)
 	if err != nil {
 		Err(ctx, Resp{
-			Code: USER_SELECT_BY_ID_ERR,
-			Msg:  err.Error(),
+			Msg: err.Error(),
 		})
 		return
 	}
 	Ok(ctx, Resp{
 		Data: user,
+		Msg:  "Select User By Id OK",
 	})
 }
 
-func (userApi UserApi) SelectPaginatedUser(ctx *gin.Context) {
+func (userApi UserApi) SelectPaginatedUsers(ctx *gin.Context) {
 	var paginateDto dto.PaginateDto
 	//* ctx.ShouldBind(any)
 	validationErrs := ctx.ShouldBind(&paginateDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
 		Err(ctx, Resp{
-			Code: USER_SELECT_BY_PAGE_ERR,
-			Msg:  validationErrs.Error(),
+			Msg: validationErrs.Error(),
 		})
 		return
 	}
-	userArr, total, err := userApi.UserService.SelectPaginatedUser(&paginateDto)
+	userArr, total, err := userApi.UserService.SelectPaginatedUsers(&paginateDto)
 	if err != nil {
 		Err(ctx, Resp{
-			Code: USER_SELECT_BY_PAGE_ERR,
-			Msg:  err.Error(),
+			Msg: err.Error(),
 		})
 		return
 	}
 	Ok(ctx, Resp{
-		Data:  userArr,
-		Total: total,
+		Data: gin.H{
+			"users": userArr,
+			"total": total,
+		},
+		Msg: "Select Paginated Users OK",
 	})
 }
 
@@ -164,24 +154,46 @@ func (userApi UserApi) UpdateUser(ctx *gin.Context) {
 	validationErrs := ctx.ShouldBindUri(&userUpdateDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		Err(ctx, Resp{Code: USER_UPDATE_ERR, Msg: validationErrs.Error()})
+		Err(ctx, Resp{Msg: validationErrs.Error()})
 		return
 	}
 	validationErrs = ctx.ShouldBind(&userUpdateDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		Err(ctx, Resp{Code: USER_UPDATE_ERR, Msg: validationErrs.Error()})
+		Err(ctx, Resp{Msg: validationErrs.Error()})
 		return
 	}
 	err := userApi.UserService.UpdateUser(&userUpdateDto)
 	if err != nil {
 		Err(ctx, Resp{
-			Code: USER_UPDATE_ERR,
-			Msg:  err.Error(),
+			Msg: err.Error(),
 		})
 		return
 	}
 	Ok(ctx, Resp{
-		Msg: "Update ok",
+		Msg: "Update User OK",
+	})
+}
+
+func (userApi UserApi) DeleteUserById(ctx *gin.Context) {
+	var idDto dto.IdDto
+	validationErrs := ctx.ShouldBindUri(&idDto)
+	if validationErrs != nil {
+		global.Logger.Errorln(validationErrs.Error())
+		Err(ctx, Resp{
+			Msg: validationErrs.Error(),
+		})
+		return
+	}
+	user, err := userApi.UserService.DeleteUserById(&idDto)
+	if err != nil {
+		Err(ctx, Resp{
+			Msg: err.Error(),
+		})
+		return
+	}
+	Ok(ctx, Resp{
+		Data: user,
+		Msg:  "Delete User By Id OK",
 	})
 }

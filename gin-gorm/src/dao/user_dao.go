@@ -26,20 +26,29 @@ func NewUserDao() *UserDao {
 	return userDao
 }
 
+// InsertUser
+// ! Save
 func (userDao *UserDao) InsertUser(userInsertDto *dto.UserInsertDto) error {
 	var user data.User
 	userInsertDto.AssignToUser(&user)
-	err := userDao.database.Model(&data.User{}).Save(&user).Error
+	//? Save is a combination function.
+	//? If save value does not contain primary key, it will execute Create, otherwise it will execute Update (with all fields).
+	//? Don’t use Save with Model, it’s an Undefined Behavior.
+	err := userDao.database.Save(&user).Error
 	if err == nil {
-		userInsertDto.ID = user.ID  //! 接收 gorm 生成的主键 ID
+		userInsertDto.Id = user.ID  //! 接收 gorm 生成的主键 Id
 		userInsertDto.Password = "" //! json 编解码时忽略该字段
 	}
 	return err
 }
 
-func (userDao *UserDao) SelectUserByUsernameAndPassword(userLoginDto *dto.UserLoginDto) (data.User, error) {
+// SelectUser
+// ! Where, First
+func (userDao *UserDao) SelectUser(userLoginDto *dto.UserLoginDto) (data.User, error) {
 	var user data.User
-	err := userDao.database.Model(&data.User{}).Where("username = ? and password = ?", userLoginDto.Username, userLoginDto.Password).First(&user).Error
+	err := userDao.database.
+		// Model(&data.User{}).
+		Where("username = ? and password = ?", userLoginDto.Username, userLoginDto.Password).First(&user).Error
 	if err != nil {
 		return user, err
 	}
@@ -49,9 +58,13 @@ func (userDao *UserDao) SelectUserByUsernameAndPassword(userLoginDto *dto.UserLo
 	return user, nil
 }
 
+// SelectUserByUsername
+// ! Where, First
 func (userDao *UserDao) SelectUserByUsername(username string) (data.User, error) {
 	var user data.User
-	err := userDao.database.Model(&data.User{}).Where("username = ?", username).First(&user).Error
+	err := userDao.database.
+		// Model(&data.User{}).
+		Where("username = ?", username).First(&user).Error
 	if err != nil {
 		return user, err
 	}
@@ -61,29 +74,54 @@ func (userDao *UserDao) SelectUserByUsername(username string) (data.User, error)
 	return user, nil
 }
 
+// SelectUserById
+// ! First
 func (userDao *UserDao) SelectUserById(id uint) (data.User, error) {
 	var user data.User
-	err := userDao.database.Model(&data.User{}).First(&user, id).Error
+	//* Select with primary key
+	err := userDao.database.
+		// Model(&data.User{}).
+		First(&user, id).Error
 	return user, err
 }
 
-func (userDao *UserDao) SelectPaginatedUser(paginateDto *dto.PaginateDto) ([]data.User, int64, error) {
+// SelectPaginatedUsers
+// ! Scopes, Find, Offset, Limit, Count
+func (userDao *UserDao) SelectPaginatedUsers(paginateDto *dto.PaginateDto) ([]data.User, int64, error) {
 	var userArr []data.User //! 接收分页查询结果
 	var total int64         //! 接收总记录数
-	err := userDao.database.Model(&data.User{}).
+	err := userDao.database.
+		// Model(&data.User{}).
 		Scopes(GetPaginateFunc(paginateDto)). //! 传递分页函数
-		Find(&userArr).                       //! 获取分页查询结果
+		Find(&userArr).                       //! 分页查询
 		Offset(-1).Limit(-1).                 //! 取消分页查询条件
-		Count(&total).                        //! 获取总记录数
-		Error                                 //! 获取可能的错误
+		Count(&total).Error                   //! 总记录数
 	return userArr, total, err
 }
 
+// UpdateUser
+// ! Save
 func (userDao *UserDao) UpdateUser(userUpdateDto *dto.UserUpdateDto) error {
-	user, err := userDao.SelectUserById(userUpdateDto.ID)
+	user, err := userDao.SelectUserById(userUpdateDto.Id)
 	if err != nil {
 		return err
 	}
 	userUpdateDto.AssignToUser(&user)
-	return userDao.database.Model(&data.User{}).Where("id = ?", user.ID).Save(&user).Error
+	//? Save is a combination function.
+	//? If save value does not contain primary key, it will execute Create, otherwise it will execute Update (with all fields).
+	//! Don’t use Save with Model, it’s an Undefined Behavior.
+	return userDao.database.Save(&user).Error
+}
+
+// DeleteUserById
+// ! Where, Delete
+func (userDao *UserDao) DeleteUserById(id uint) (data.User, error) {
+	var user data.User
+	err := userDao.database.
+		// Model(&data.User{}).
+		Where("id = ?", id).
+		Delete(&user).Error
+	//* Delete with primary key
+	//// err := userDao.database.Delete(&user, id).Error
+	return user, err
 }
