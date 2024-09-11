@@ -40,20 +40,16 @@ func GenToken(id uint, username string) (tokStr string, err error) {
 	return unsignedToken.SignedString( /* 强制类型转换 */ signingKey)
 }
 
-// ParseToken 遍历 tokStr 字符串，返回解析出的载荷 payload，可能的错误 err 和 token是否有效 isValid
-func ParseToken(tokStr string) (payload Payload, err error, isValid bool) {
+// ParseToken 遍历 tokStr 字符串，返回解析出的载荷 payload 和可能的错误 err
+func ParseToken(tokStr string) (payload Payload, err error) {
 	payload = Payload{}                                          // 解析出的载荷
 	keyProvider := func(token *jwt.Token) (interface{}, error) { // 提供签名密钥的函数
 		return signingKey, nil
 	}
 
 	tok, err := jwt.ParseWithClaims(tokStr, &payload, keyProvider)
-	if err != nil {
-		return payload, err, false
+	if err == nil && !tok.Valid {
+		err = errors.New("token invalid")
 	}
-	if !tok.Valid {
-		err = errors.New("invalid token")
-		return payload, err, false
-	}
-	return payload, nil, true
+	return payload, err
 }

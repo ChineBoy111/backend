@@ -53,7 +53,7 @@ func (userDao *UserDao) SelectUserByUsername(username string) (data.User, error)
 		return user, err
 	}
 	if user.ID == 0 {
-		return user, errors.New("username error")
+		return user, errors.New("username doesn't exist")
 	}
 	return user, nil
 }

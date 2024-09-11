@@ -184,9 +184,9 @@ func TestToken(t *testing.T) {
 	}
 	log.Printf("token = %s\n", tokStr)
 	log.Println("==================== Parse token ====================")
-	payload, err, isValid := util.ParseToken(tokStr) // tokStr + "suffix"
+	payload, err := util.ParseToken(tokStr) // tokStr + "suffix"
 	if err != nil {
-		panic(fmt.Sprintf("Parse token error %s, isValid = %v", err.Error(), isValid))
+		panic(fmt.Sprintf("Parse token error %s\n", err.Error()))
 	}
-	log.Printf("payload = %v, isValid = %v\n", payload, isValid)
+	log.Printf("payload = %v\n", payload)
 }

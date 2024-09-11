@@ -39,7 +39,7 @@ func (userService *UserService) Login(loginDto *dto.LoginDto) (data.User, string
 	}
 	// 登录失败
 	if !util.IsEquivalent(user.Password /* hashStr */, loginDto.Password /* password */) {
-		err = errors.New("username or password error")
+		err = errors.New("password error")
 		return user, token, err
 	}
 	token, err = util.GenToken(user.ID, user.Username)
@@ -50,7 +50,7 @@ func (userService *UserService) Login(loginDto *dto.LoginDto) (data.User, string
 	// 登录成功
 	//! 使用 redis 设置 token 的过期时间
 	expire := viper.GetDuration("redis.expire")
-	global.RedisCli.Set(context.Background(), "user"+strconv.Itoa(int(user.ID)), token, expire*time.Second)
+	err = global.RedisCli.Set(context.Background(), "user"+strconv.Itoa(int(user.ID)), token, expire*time.Second).Err()
 	return user, token, err
 }
 
@@ -71,7 +71,7 @@ func (userService *UserService) SelectPaginatedUsers(paginateDto *dto.PaginateDt
 
 func (userService *UserService) UpdateUser(userUpdateDto *dto.UserUpdateDto) error {
 	if userUpdateDto.Id <= 0 {
-		return errors.New("id error")
+		return errors.New("id invalid")
 	}
 	return userService.UserDao.UpdateUser(userUpdateDto)
 }

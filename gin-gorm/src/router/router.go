@@ -42,6 +42,8 @@ func StartRouter() {
 
 	//! 使用 gin 跨域中间件
 	engine.Use(middleware.Cors())
+	//! 使用 token 鉴权中间件
+	engine.Use(middleware.Authorize())
 
 	//* 访问 api 文档 http://127.0.0.1:3333/swagger/index.html
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
