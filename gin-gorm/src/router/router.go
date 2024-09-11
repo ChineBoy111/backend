@@ -1,22 +1,21 @@
 package router
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	"net/http"
-	"os/signal"
-	"syscall"
-	"time"
-
 	"bronya.com/gin-gorm/src/api"
 	_ "bronya.com/gin-gorm/src/docs"
 	"bronya.com/gin-gorm/src/global"
 	"bronya.com/gin-gorm/src/middleware"
+	"context"
+	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 var publicRouteGroup, authorizedRouteGroup *gin.RouterGroup

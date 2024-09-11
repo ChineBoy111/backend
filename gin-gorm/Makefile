@@ -20,6 +20,7 @@ get:
 	go get -u github.com/redis/go-redis/v9
 	go get -u github.com/golang-jwt/jwt/v5
 	go get -u github.com/gin-contrib/cors
+	go get github.com/google/uuid
 	@echo "====================   Install    ===================="
 	go install github.com/swaggo/swag/cmd/swag@latest
 

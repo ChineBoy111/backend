@@ -25,7 +25,7 @@ type UserInsertDto struct {
 	Name     string `json:"name"               form:"name"`
 	Phone    string `json:"phone"              form:"phone"`
 	Email    string `json:"email"              form:"email"`
-	Avatar   string
+	Avatar   string `json:"avatar"`
 }
 
 func (userInsertDto *UserInsertDto) AssignToUser(user *data.User) {
@@ -34,6 +34,7 @@ func (userInsertDto *UserInsertDto) AssignToUser(user *data.User) {
 	user.Name = userInsertDto.Name
 	user.Phone = userInsertDto.Phone
 	user.Email = userInsertDto.Email
+	user.Avatar = userInsertDto.Avatar
 }
 
 type UserUpdateDto struct {

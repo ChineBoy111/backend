@@ -5,7 +5,10 @@ import (
 	"bronya.com/gin-gorm/src/global"
 	"bronya.com/gin-gorm/src/service"
 	"bronya.com/gin-gorm/src/util"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"path/filepath"
 )
 
 type UserApi struct {
@@ -48,17 +51,13 @@ func (userApi UserApi) UserLogin(ctx *gin.Context) { //! 不使用指针接收
 	validationErrs := ctx.ShouldBind(&userLoginDto) //! 自动解析并绑定
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		Err(ctx, Resp{
-			Msg: validationErrs.Error(),
-		})
+		Err(ctx, Resp{Msg: validationErrs.Error()})
 		return
 	}
 
 	user, err := userApi.UserService.SelectUser(&userLoginDto)
 	if err != nil {
-		Err(ctx, Resp{
-			Msg: err.Error(),
-		})
+		Err(ctx, Resp{Msg: err.Error()})
 		return
 	}
 
@@ -78,20 +77,28 @@ func (userApi UserApi) InsertUser(ctx *gin.Context) {
 	validationErrs := ctx.ShouldBind(&userInsertDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		Err(ctx, Resp{
-			Msg: validationErrs.Error(),
-		})
+		Err(ctx, Resp{Msg: validationErrs.Error()})
 		return
 	}
 
-	err := userApi.UserService.InsertUser(&userInsertDto)
+	//! 文件上传
+	avatar, err := ctx.FormFile("avatar")
 	if err != nil {
-		Err(ctx, Resp{
-			Msg: err.Error(),
-		})
+		Err(ctx, Resp{Msg: err.Error()})
 		return
 	}
-
+	dstFilename, _ := uuid.NewUUID()
+	dstFilePath := fmt.Sprintf("./upload/%s", dstFilename.String()+filepath.Ext(avatar.Filename))
+	err = ctx.SaveUploadedFile(avatar, dstFilePath)
+	if err != nil {
+		Err(ctx, Resp{Msg: err.Error()})
+		return
+	}
+	err = userApi.UserService.InsertUser(&userInsertDto)
+	if err != nil {
+		Err(ctx, Resp{Msg: err.Error()})
+		return
+	}
 	Ok(ctx, Resp{
 		Data: userInsertDto,
 		Msg:  "Insert User OK",
@@ -104,16 +111,12 @@ func (userApi UserApi) SelectUserById(ctx *gin.Context) {
 	validationErrs := ctx.ShouldBindUri(&idDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		Err(ctx, Resp{
-			Msg: validationErrs.Error(),
-		})
+		Err(ctx, Resp{Msg: validationErrs.Error()})
 		return
 	}
 	user, err := userApi.UserService.SelectUserById(&idDto)
 	if err != nil {
-		Err(ctx, Resp{
-			Msg: err.Error(),
-		})
+		Err(ctx, Resp{Msg: err.Error()})
 		return
 	}
 	Ok(ctx, Resp{
@@ -128,16 +131,12 @@ func (userApi UserApi) SelectPaginatedUsers(ctx *gin.Context) {
 	validationErrs := ctx.ShouldBind(&paginateDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		Err(ctx, Resp{
-			Msg: validationErrs.Error(),
-		})
+		Err(ctx, Resp{Msg: validationErrs.Error()})
 		return
 	}
 	userArr, total, err := userApi.UserService.SelectPaginatedUsers(&paginateDto)
 	if err != nil {
-		Err(ctx, Resp{
-			Msg: err.Error(),
-		})
+		Err(ctx, Resp{Msg: err.Error()})
 		return
 	}
 	Ok(ctx, Resp{
@@ -165,9 +164,7 @@ func (userApi UserApi) UpdateUser(ctx *gin.Context) {
 	}
 	err := userApi.UserService.UpdateUser(&userUpdateDto)
 	if err != nil {
-		Err(ctx, Resp{
-			Msg: err.Error(),
-		})
+		Err(ctx, Resp{Msg: err.Error()})
 		return
 	}
 	Ok(ctx, Resp{
@@ -180,16 +177,12 @@ func (userApi UserApi) DeleteUserById(ctx *gin.Context) {
 	validationErrs := ctx.ShouldBindUri(&idDto)
 	if validationErrs != nil {
 		global.Logger.Errorln(validationErrs.Error())
-		Err(ctx, Resp{
-			Msg: validationErrs.Error(),
-		})
+		Err(ctx, Resp{Msg: validationErrs.Error()})
 		return
 	}
 	user, err := userApi.UserService.DeleteUserById(&idDto)
 	if err != nil {
-		Err(ctx, Resp{
-			Msg: err.Error(),
-		})
+		Err(ctx, Resp{Msg: err.Error()})
 		return
 	}
 	Ok(ctx, Resp{
