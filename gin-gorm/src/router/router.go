@@ -37,8 +37,8 @@ func StartRouter() {
 	//! 创建子路组
 	UserRouteGroup() // 创建 user 子路由组
 
-	//! 注册自定义字段校验器
-	api.RegisterCustomValidator()
+	//! 使用 tag 验证器
+	api.UseTagValidator()
 
 	//! 使用 gin 跨域中间件
 	engine.Use(middleware.Cors())

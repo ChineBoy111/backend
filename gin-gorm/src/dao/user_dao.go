@@ -42,22 +42,6 @@ func (userDao *UserDao) InsertUser(userInsertDto *dto.UserInsertDto) error {
 	return err
 }
 
-// SelectUser
-// ! Where, First
-func (userDao *UserDao) SelectUser(userLoginDto *dto.UserLoginDto) (data.User, error) {
-	var user data.User
-	err := userDao.database.
-		// Model(&data.User{}).
-		Where("username = ? and password = ?", userLoginDto.Username, userLoginDto.Password).First(&user).Error
-	if err != nil {
-		return user, err
-	}
-	if user.ID == 0 {
-		return user, errors.New("username error")
-	}
-	return user, nil
-}
-
 // SelectUserByUsername
 // ! Where, First
 func (userDao *UserDao) SelectUserByUsername(username string) (data.User, error) {

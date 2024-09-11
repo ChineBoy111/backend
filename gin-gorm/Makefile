@@ -21,7 +21,8 @@ get:
 	go get -u github.com/golang-jwt/jwt/v5
 	go get -u github.com/gin-contrib/cors
 	go get github.com/google/uuid
-	@echo "====================   Install    ===================="
+	go get golang.org/x/crypto/bcrypt
+	@echo "==================== Install ===================="
 	go install github.com/swaggo/swag/cmd/swag@latest
 
 tidy:
@@ -39,7 +40,7 @@ clean:
 test:
 	cd ./test && \
 	go test -run TestBuildByMap && \
-	go test -run TestBuildByDirNode
+	go test -run TestBuildByDir
 	@echo "Test Done!"
 
 swag:

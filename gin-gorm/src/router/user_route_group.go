@@ -11,7 +11,7 @@ func UserRouteGroup() {
 	//* 创建 public 子路由组 publicUserRouteGroup
 	publicUserRouteGroup := publicRouteGroup.Group("/user" /* 路由前缀 */)
 	{ //? publicUserRouteGroup
-		publicUserRouteGroup.POST("/login", userApi.UserLogin /* 回调函数 */)
+		publicUserRouteGroup.POST("/login", userApi.Login /* 回调函数 */)
 	}
 
 	//* 创建 authorized 子路由组 authorizedUserRouteGroup

@@ -4,7 +4,13 @@ import (
 	"bronya.com/gin-gorm/src/dao"
 	"bronya.com/gin-gorm/src/data"
 	"bronya.com/gin-gorm/src/dto"
+	"bronya.com/gin-gorm/src/global"
+	"bronya.com/gin-gorm/src/util"
+	"context"
 	"errors"
+	"github.com/spf13/viper"
+	"strconv"
+	"time"
 )
 
 type UserService struct {
@@ -23,10 +29,29 @@ func NewUserService() *UserService {
 	return userService
 }
 
-func (userService *UserService) SelectUser(userLoginDto *dto.UserLoginDto) (data.User, error) {
+func (userService *UserService) Login(loginDto *dto.LoginDto) (data.User, string, error) {
 	var err error
-	user, err := userService.UserDao.SelectUser(userLoginDto)
-	return user, err
+	var token string
+	user, err := userService.UserDao.SelectUserByUsername(loginDto.Username)
+	// 登录失败
+	if err != nil {
+		return user, token, err
+	}
+	// 登录失败
+	if !util.IsEquivalent(user.Password /* hashStr */, loginDto.Password /* password */) {
+		err = errors.New("username or password error")
+		return user, token, err
+	}
+	token, err = util.GenToken(user.ID, user.Username)
+	// 登录失败
+	if err != nil {
+		return user, token, err
+	}
+	// 登录成功
+	//! 使用 redis 设置 token 的过期时间
+	expire := viper.GetDuration("redis.expire")
+	global.RedisCli.Set(context.Background(), "user"+strconv.Itoa(int(user.ID)), token, expire*time.Second)
+	return user, token, err
 }
 
 func (userService *UserService) InsertUser(userInsertDto *dto.UserInsertDto) error {
@@ -46,7 +71,7 @@ func (userService *UserService) SelectPaginatedUsers(paginateDto *dto.PaginateDt
 
 func (userService *UserService) UpdateUser(userUpdateDto *dto.UserUpdateDto) error {
 	if userUpdateDto.Id <= 0 {
-		return errors.New("Id error")
+		return errors.New("id error")
 	}
 	return userService.UserDao.UpdateUser(userUpdateDto)
 }

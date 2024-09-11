@@ -53,36 +53,34 @@ package reflect
 func DeepEqual(x, y interface{}) bool // 通过反射，判断 x, y 是否深度相等
 ```
 
-## 自定义字段校验器
+## tag 验证器
 
-数据传输对象 [UserLoginDto](../dto/user_dto.go)
+数据传输对象 [LoginDto](../dto/user_dto.go)
 
 ```go
-type UserLoginDto struct {
+type LoginDto struct {
 	//* json:"username"
 	//! username  - json 中的字段名为 username
 	//* binding:"required,not_admin"
 	//! required  - 必填字段，绑定时如果 name 为空则报错
-	//! not_admin - 自定义字段校验器 ../../data/validator.go
+	//! not_admin - tag 验证器 ../../data/validator.go
 	Username string `json:"username" binding:"required,not_admin"`
 	Password string `json:"password" binding:"required"`
 }
 ```
 
-自定义字段校验器 [validator](./validator.go)
+tag 验证器 [validator](./tag_validate.go)
 
 ```go
-// RegisterCustomValidator 注册自定义字段校验器
-// ! 使用自定义字段校验器
+// UseTagValidator 使用 tag 验证器
 //
 //	type StructName struct {
 //	    FieldName string `json:"name" binding:"not_admin"`
 //	}
-//
 // ! 类型断言 typeX, ok := x.(Type); ok 表示类型断言是否成功
-func RegisterCustomValidator() {
-	if customValidator, ok /* 类型断言是否成功 */ := binding.Validator.Engine().(*validator.Validate); ok {
-		customValidator.RegisterValidation("not_admin" /* 结构体标签名 */, func(fieldLevel validator.FieldLevel) bool {
+func UseTagValidator() {
+	if tagValidator, ok /* 类型断言是否成功 */ := binding.Validator.Engine().(*validator.Validate); ok {
+		tagValidator.RegisterValidation("not_admin" /* 结构体标签名 */, func(fieldLevel validator.FieldLevel) bool {
 			if fieldName, ok /* 类型断言是否成功 */ := fieldLevel.Field().Interface().(string); ok {
 				// fieldName 不为空，且不以 admin 开头
 				if fieldName != "" && strings.Index(fieldName, "admin") != 0 {

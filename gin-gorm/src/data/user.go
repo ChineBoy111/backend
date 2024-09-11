@@ -1,6 +1,9 @@
 package data
 
-import "gorm.io/gorm"
+import (
+	"bronya.com/gin-gorm/src/util"
+	"gorm.io/gorm"
+)
 
 // ! ==================== Data 数据对象 ====================
 
@@ -16,4 +19,12 @@ type User struct {
 	Phone    string `json:"phone"    gorm:"size:11"`           // 电话
 	Email    string `json:"email"    gorm:"size:128"`          // 邮箱
 	Avatar   string `json:"avatar"   gorm:"size:255"`          // 头像
+}
+
+func (user *User) BeforeCreate(db *gorm.DB) error {
+	hashStr, err := util.Encrypt(user.Password)
+	if err == nil {
+		user.Password = hashStr
+	}
+	return err
 }

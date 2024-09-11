@@ -140,16 +140,16 @@ func TestRedisCli(t *testing.T) {
 		panic(fmt.Sprintf("Connect redis server error %s", err.Error()))
 	}
 
-	expiration := viper.GetDuration("db.redis.expiration") // 10 分钟
+	expire := viper.GetDuration("redis.expire")
 
-	//! redisCli.Set(context.Background(), key, value, expiration).Err()
-	err = redisCli.Set(context.Background(), "username", "root", expiration*time.Second).Err()
+	//! redisCli.Set(context.Background(), key, value, expire).Err()
+	err = redisCli.Set(context.Background(), "username", "root", expire*time.Second).Err()
 	if err != nil {
 		log.Printf("Redis set error %s\n", err.Error())
 	}
 
-	//! redisCli.Set(context.Background(), key, value, expiration).Err()
-	err = redisCli.Set(context.Background(), "password", "0228", expiration*time.Second).Err()
+	//! redisCli.Set(context.Background(), key, value, expire).Err()
+	err = redisCli.Set(context.Background(), "password", "0228", expire*time.Second).Err()
 	if err != nil {
 		log.Printf("Redis set error %s\n", err.Error())
 	}
