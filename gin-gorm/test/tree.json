@@ -1,16 +1,38 @@
 {
   "dirname": "src",
   "subDirs": [
-    { "dirname": "api" },
-    { "dirname": "cmd" },
-    { "dirname": "conf" },
-    { "dirname": "dao" },
-    { "dirname": "data" },
-    { "dirname": "dto" },
-    { "dirname": "global" },
-    { "dirname": "middleware" },
-    { "dirname": "router" },
-    { "dirname": "service" },
-    { "dirname": "util" }
+    {
+      "dirname": "api"
+    },
+    {
+      "dirname": "cmd"
+    },
+    {
+      "dirname": "conf"
+    },
+    {
+      "dirname": "dao"
+    },
+    {
+      "dirname": "data"
+    },
+    {
+      "dirname": "dto"
+    },
+    {
+      "dirname": "global"
+    },
+    {
+      "dirname": "middleware"
+    },
+    {
+      "dirname": "router"
+    },
+    {
+      "dirname": "service"
+    },
+    {
+      "dirname": "util"
+    }
   ]
 }

@@ -83,7 +83,11 @@ func (userApi UserApi) InsertUser(ctx *gin.Context) {
 			Err(ctx, Resp{Msg: err.Error()})
 			return
 		}
-		dstFilename, _ := uuid.NewUUID()
+		dstFilename, err := uuid.NewUUID()
+		if err != nil {
+			Err(ctx, Resp{Msg: err.Error()})
+			return
+		}
 		dstFilePath := fmt.Sprintf("./upload/%s", dstFilename.String()+filepath.Ext(avatar.Filename))
 		err = ctx.SaveUploadedFile(avatar, dstFilePath)
 		if err != nil {

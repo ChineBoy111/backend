@@ -29,7 +29,7 @@ func ConnMysql() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	//! 从 go 结构体自动迁移到数据库表，创建表
+	//! 从 go 结构体自动迁移到 db 表，创建表
 	db.AutoMigrate(&data.User{}) //* 传递指向一个 data.User 对象的指针
 	return db, nil
 }

@@ -1,7 +1,6 @@
 .PHONY: init get # phony target
 
 run: build
-	rm -rf ./log && mkdir ./log
 	./main
 
 init:
@@ -35,7 +34,7 @@ build:
 	# set GOOS=windows && set GOARCH=amd64 && go build -o ./main ./src/main.go
 
 clean:
-	rm -rf ./main ./log/*
+	rm -rf ./main ./log
 
 test:
 	cd ./test && \

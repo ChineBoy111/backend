@@ -40,6 +40,10 @@ func getEncoder() zapcore.Encoder {
 func getWriterSyncer() zapcore.WriteSyncer {
 	sep := string(filepath.Separator)
 	rootDir, _ := os.Getwd()
+	_, err := os.Stat("./log")
+	if os.IsNotExist(err) {
+		os.Mkdir("./log", os.ModePerm)
+	}
 	// logFile := fmt.Sprintf("./log/%s.log", time.Now().Format(time.DateOnly))
 	logFile := rootDir + sep + "log" + sep + time.Now().Format(time.DateOnly) + ".log"
 	log.Printf("logFile = %s\n", logFile)

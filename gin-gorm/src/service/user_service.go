@@ -31,26 +31,40 @@ func NewUserService() *UserService {
 
 func (userService *UserService) Login(loginDto *dto.LoginDto) (data.User, string, error) {
 	var err error
-	var token string
 	user, err := userService.UserDao.SelectUserByUsername(loginDto.Username)
 	// 登录失败
 	if err != nil {
-		return user, token, err
+		return user, "", err
 	}
 	// 登录失败
 	if !util.IsEquivalent(user.Password /* hashStr */, loginDto.Password /* password */) {
 		err = errors.New("password error")
-		return user, token, err
+		return user, "", err
 	}
-	token, err = util.GenToken(user.ID, user.Username)
+	token, err := util.GenToken(user.ID, user.Username)
 	// 登录失败
 	if err != nil {
 		return user, token, err
 	}
 	// 登录成功
-	//! 使用 redis 设置 token 的过期时间
-	expire := viper.GetDuration("redis.expire")
-	err = global.RedisCli.Set(context.Background(), "user"+strconv.Itoa(int(user.ID)), token, expire*time.Second).Err()
+	expire := viper.GetDuration("redis.expire") * time.Second
+
+	//! 使用 redis 缓存 token
+	tokenKey := "token" + strconv.Itoa(int(user.ID))
+	err = global.RedisCli.Set(context.Background(), tokenKey, token, expire).Err()
+	if err != nil {
+		return user, token, err
+	}
+	//! 使用 redis 缓存 LoginInfo
+	userKey := "user" + strconv.Itoa(int(user.ID))
+	err = global.RedisCli.Set(context.Background(), userKey, data.LoginInfo{
+		Id:       user.ID,
+		Username: user.Username,
+	}, expire).Err()
+	if err != nil {
+		return user, token, err
+	}
+
 	return user, token, err
 }
 
