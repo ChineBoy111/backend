@@ -19,7 +19,7 @@ var signingKey = []byte(viper.GetString("jwt.signingKey"))
 
 // GenToken 返回已签名的 tokStr 字符串和可能的错误 err
 func GenToken(id uint, username string) (tokStr string, err error) {
-	expire := viper.GetDuration("jwt.expire")
+	expire := time.Duration(viper.GetInt64("jwt.expire")) * time.Second
 
 	registeredClaims := jwt.RegisteredClaims{
 		IssuedAt:  jwt.NewNumericDate(time.Now()),                           //! jwt 令牌签发时间

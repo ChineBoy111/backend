@@ -58,14 +58,11 @@ func (userService *UserService) Login(loginDto *dto.LoginDto) (data.User, string
 	}
 	//! 使用 redis 缓存 LoginInfo
 	userId := "user" + strconv.Itoa(int(user.ID))
-	loginInfo, err := json.Marshal(map[string]any{
-		"id": user.ID,
+	loginInfo, _ := json.Marshal(map[string]any{
+		"id":       user.ID,
 		"username": user.Username,
 	})
 	err = global.RedisCli.Set(context.Background(), userId, loginInfo, expire).Err()
-	if err != nil {
-		return user, token, err
-	}
 	return user, token, err
 }
 

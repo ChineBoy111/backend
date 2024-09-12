@@ -12,7 +12,6 @@ func ConnRedis() (redisCli *redis.Client, err error) {
 		Password: "",
 		DB:       0,
 	})
-
 	_, err = redisCli.Ping(context.Background()).Result()
 	if err != nil {
 		return nil, err

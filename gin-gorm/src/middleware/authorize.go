@@ -5,9 +5,9 @@ import (
 	"bronya.com/gin-gorm/src/global"
 	"bronya.com/gin-gorm/src/util"
 	"context"
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -18,8 +18,12 @@ func Authorize() func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		bearerToken := ctx.GetHeader("Authorization")
 		//! Authorization: Bearer <token>
-		if bearerToken == "" || !strings.HasPrefix(bearerToken, "Bearer ") {
-			api.Err(ctx, api.Resp{Msg: "Token error"})
+		if bearerToken == "" {
+			api.Err(ctx, api.Resp{Msg: "Token is empty"})
+			return
+		}
+		if !strings.HasPrefix(bearerToken, "Bearer ") {
+			api.Err(ctx, api.Resp{Msg: "Token doesn't have prefix 'Bearer '"})
 			return
 		}
 		token := bearerToken[7:]
@@ -29,48 +33,30 @@ func Authorize() func(ctx *gin.Context) {
 			return
 		}
 		tokenId := "token" + strconv.Itoa(int(payload.Id))
-		cachedToken, err := global.RedisCli.Get(context.Background(), tokenId).Result()
+		oldToken, err := global.RedisCli.Get(context.Background(), tokenId).Result()
 		if err != nil {
 			api.Err(ctx, api.Resp{Msg: err.Error()})
 			return
 		}
-		if token != cachedToken {
-			api.Err(ctx, api.Resp{Msg: "Token error"})
+		if token != oldToken {
+			api.Err(ctx, api.Resp{Msg: "Token doesn't match"})
 			return
 		}
 		//! token 是否过期
-		remainTTL, err := global.RedisCli.TTL(context.Background(), token).Result()
+		ttl, err := global.RedisCli.TTL(context.Background(), tokenId).Result()
 		if err != nil {
-			api.Err(ctx, api.Resp{Msg: err.Error()})
+			api.Err(ctx, api.Resp{Msg: "Token not found"})
 			return
 		}
-		if remainTTL < 0 {
-			api.Err(ctx, api.Resp{Msg: "token expired"})
+		if ttl <= 0 {
+			log.Printf("ttl = %v\n", ttl)
+			api.Err(ctx, api.Resp{Msg: "Token is expired"})
 			return
 		}
 		expire := viper.GetDuration("redis.expire") * time.Second
-		//! token 续签
-		if remainTTL > expire/2 {
-			ctx.Next() // 放行
-		}
-		//! 更新 redis 缓存的 token
-		var newToken string
-		newToken, err = util.GenToken(payload.Id, payload.Username)
-		if err == nil {
-			err = global.RedisCli.Set(context.Background(), tokenId, newToken, expire).Err()
-		}
-		if err != nil {
-			api.Err(ctx, api.Resp{Msg: err.Error()})
-			return
-		}
-		ctx.Header("Authorization", "Bearer "+newToken)
-		//! 更新 redis 缓存的 loginInfo
-		userId := "user" + strconv.Itoa(int(payload.Id))
-		loginInfo, err := json.Marshal(map[string]any{
-			"id":       payload.Id,
-			"username": payload.Username,
-		})
-		global.RedisCli.Set(context.Background(), userId, loginInfo, expire)
-		ctx.Next() // 放行
+		//! ==================== token 续期 ====================
+		global.RedisCli.Expire(context.Background(), tokenId, expire)
+		ctx.Header("Authorization", "Bearer "+token) //! REDUNDANT
+		ctx.Next()                                   // 放行
 	}
 }

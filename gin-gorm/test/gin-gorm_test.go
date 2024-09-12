@@ -135,37 +135,33 @@ func TestNotify(t *testing.T) {
 
 // ! go test -run TestRedisCli
 func TestRedisCli(t *testing.T) {
-	redisCli, err := conf.ConnRedis() //! 连接 redis，创建表
+	viper.AddConfigPath("../")
+	viper.SetConfigName("settings")
+	viper.SetConfigType("yaml")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Sprintf("Read in config error %s", err.Error()))
+	}
+	redisCli, err := conf.ConnRedis() //! 连接 redis
 	if err != nil {
 		panic(fmt.Sprintf("Connect redis server error %s", err.Error()))
 	}
-
-	expire := viper.GetDuration("redis.expire")
-
-	//! redisCli.Set(context.Background(), key, value, expire).Err()
-	err = redisCli.Set(context.Background(), "username", "root", expire*time.Second).Err()
+	expire := viper.GetDuration("redis.expire") * time.Second
+	err = redisCli.Set(context.Background(), "username", "root", expire).Err()
 	if err != nil {
 		log.Printf("Redis set error %s\n", err.Error())
 	}
-
-	//! redisCli.Set(context.Background(), key, value, expire).Err()
-	err = redisCli.Set(context.Background(), "password", "0228", expire*time.Second).Err()
-	if err != nil {
-		log.Printf("Redis set error %s\n", err.Error())
-	}
-
-	//! redisCli.Get(context.Background(), key).Result()
 	username, err := redisCli.Get(context.Background(), "username").Result()
 	if err != nil {
 		log.Printf("Redis get error %s\n", err.Error())
 	}
-	log.Printf("Redis get username = %s", username)
-
-	//! redisCli.Del(context.Background(), key1, key2, ...).Err()
-	err = redisCli.Del(context.Background(), "username", "password").Err()
+	log.Printf("username = %s", username)
+	ttl, err := redisCli.TTL(context.Background(), "username").Result()
 	if err != nil {
-		log.Printf("Redis delete error %s\n", err.Error())
+		log.Printf("Redis TTL error %s\n", err.Error())
 	}
+	log.Printf("ttl = %v\n", ttl)
+	//! err := redisCli.Del(context.Background(), key1, key2, ...).Err()
 }
 
 // ! go test -run TestToken

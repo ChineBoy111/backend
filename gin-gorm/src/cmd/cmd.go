@@ -17,7 +17,7 @@ func Start() {
 	}
 	global.Database = session
 
-	redisCli, err := conf.ConnRedis() //! 连接 redis，创建表
+	redisCli, err := conf.ConnRedis() //! 连接 redis
 	if err != nil {
 		global.Logger.Errorf("Connect redis error %s", err.Error())
 		panic(err.Error())

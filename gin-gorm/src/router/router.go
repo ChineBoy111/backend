@@ -34,6 +34,9 @@ func StartRouter() {
 	//! 创建根路由组
 	publicRouteGroup = engine.Group("/api/v1/public")
 	authorizedRouteGroup = engine.Group("/api/v1")
+	//! 使用 token 鉴权中间件
+	authorizedRouteGroup.Use(middleware.Authorize())
+
 	//! 创建子路组
 	UserRouteGroup() // 创建 user 子路由组
 
@@ -42,8 +45,6 @@ func StartRouter() {
 
 	//! 使用 gin 跨域中间件
 	engine.Use(middleware.Cors())
-	//! 使用 token 鉴权中间件
-	engine.Use(middleware.Authorize())
 
 	//* 访问 api 文档 http://127.0.0.1:3333/swagger/index.html
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

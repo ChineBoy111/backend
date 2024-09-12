@@ -28,8 +28,3 @@ func (user *User) BeforeCreate(db *gorm.DB) error {
 	}
 	return err
 }
-
-type LoginInfo struct {
-	Id       uint
-	Username string
-}
