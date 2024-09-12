@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"bronya.com/gin-gorm/src/api"
-	"bronya.com/gin-gorm/src/data"
 	"bronya.com/gin-gorm/src/global"
 	"bronya.com/gin-gorm/src/util"
 	"context"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"strconv"
@@ -28,8 +28,8 @@ func Authorize() func(ctx *gin.Context) {
 			api.Err(ctx, api.Resp{Msg: err.Error()})
 			return
 		}
-		tokenKey := "token" + strconv.Itoa(int(payload.Id))
-		cachedToken, err := global.RedisCli.Get(context.Background(), tokenKey).Result()
+		tokenId := "token" + strconv.Itoa(int(payload.Id))
+		cachedToken, err := global.RedisCli.Get(context.Background(), tokenId).Result()
 		if err != nil {
 			api.Err(ctx, api.Resp{Msg: err.Error()})
 			return
@@ -57,19 +57,20 @@ func Authorize() func(ctx *gin.Context) {
 		var newToken string
 		newToken, err = util.GenToken(payload.Id, payload.Username)
 		if err == nil {
-			err = global.RedisCli.Set(context.Background(), tokenKey, newToken, expire).Err()
+			err = global.RedisCli.Set(context.Background(), tokenId, newToken, expire).Err()
 		}
 		if err != nil {
 			api.Err(ctx, api.Resp{Msg: err.Error()})
 			return
 		}
 		ctx.Header("Authorization", "Bearer "+newToken)
-		//! 更新 redis 缓存的 LoginInfo
-		userKey := "user" + strconv.Itoa(int(payload.Id))
-		global.RedisCli.Set(context.Background(), userKey, data.LoginInfo{
-			Id:       payload.Id,
-			Username: payload.Username,
-		}, expire)
-		ctx.Next()
+		//! 更新 redis 缓存的 loginInfo
+		userId := "user" + strconv.Itoa(int(payload.Id))
+		loginInfo, err := json.Marshal(map[string]any{
+			"id":       payload.Id,
+			"username": payload.Username,
+		})
+		global.RedisCli.Set(context.Background(), userId, loginInfo, expire)
+		ctx.Next() // 放行
 	}
 }

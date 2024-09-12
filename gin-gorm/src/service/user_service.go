@@ -7,6 +7,7 @@ import (
 	"bronya.com/gin-gorm/src/global"
 	"bronya.com/gin-gorm/src/util"
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/spf13/viper"
 	"strconv"
@@ -56,15 +57,15 @@ func (userService *UserService) Login(loginDto *dto.LoginDto) (data.User, string
 		return user, token, err
 	}
 	//! 使用 redis 缓存 LoginInfo
-	userKey := "user" + strconv.Itoa(int(user.ID))
-	err = global.RedisCli.Set(context.Background(), userKey, data.LoginInfo{
-		Id:       user.ID,
-		Username: user.Username,
-	}, expire).Err()
+	userId := "user" + strconv.Itoa(int(user.ID))
+	loginInfo, err := json.Marshal(map[string]any{
+		"id": user.ID,
+		"username": user.Username,
+	})
+	err = global.RedisCli.Set(context.Background(), userId, loginInfo, expire).Err()
 	if err != nil {
 		return user, token, err
 	}
-
 	return user, token, err
 }
 
