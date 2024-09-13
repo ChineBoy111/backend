@@ -7,15 +7,15 @@ type IConn interface {
 	Start()
 	// Stop 停止连接
 	Stop()
-	// GetTCPConn 获取 TCP 连接对象（TCP 套接字）
-	GetTCPConn() *net.TCPConn
-	// GetConnID 获取连接 ID
-	GetConnID() uint32
-	// GetRemoteAddr 获取客户端的 IP 地址和端口
+	// GetTcpConn 获取 tcp 连接对象（tcp 套接字）
+	GetTcpConn() *net.TCPConn
+	// GetConnId 获取连接 id
+	GetConnId() uint32
+	// GetRemoteAddr 获取客户端的 ip 地址和端口
 	GetRemoteAddr() net.Addr
 	// Send 发送数据给客户端
 	Send()
 }
 
-// ByteHandler 处理收到的数据
-type ByteHandler func(*net.TCPConn, []byte, int) error
+// DataHandler 处理收到的数据
+type DataHandler func(tcpConn *net.TCPConn, buf []byte, bytesCnt int) error

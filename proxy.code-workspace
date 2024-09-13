@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "./proxy"
+		},
+		{
+			"path": "./proxy-client"
+		}
+	],
+	"settings": {}
+}
