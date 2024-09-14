@@ -18,7 +18,9 @@ type TcpServer struct {
 
 // Start 启动 tcp 服务器
 func (server *TcpServer) Start() {
-	log.Printf("Start server %vv%v\n", utils.Global.Name, utils.Global.Version)
+	log.Printf("%v v%v\n", utils.Global.Name, utils.Global.Version)
+	log.Println("Copyright (c) bronya.com")
+	log.Println("All rights reserved")
 	go func() { //! 负责监听所有 ip 地址的 tcp 连接请求的 goroutine
 
 		//! 解析 tcp 地址
@@ -34,7 +36,7 @@ func (server *TcpServer) Start() {
 			log.Println("Listen tcp err:", err.Error())
 			return
 		}
-		log.Printf("Start server %vv%v ok, listening %v:%v\n", utils.Global.Name, utils.Global.Version, server.HostIp, server.Port)
+		log.Printf("Start server %v v%v ok, listening %v:%v\n", utils.Global.Name, utils.Global.Version, server.HostIp, server.Port)
 
 		var connId uint32 = 0
 		//! 阻塞等待客户端的 tcp 连接请求

@@ -7,7 +7,7 @@ import (
 )
 
 type PingMiddleware struct {
-	proxy_net.TcpBaseMiddleware
+	proxy_net.TcpMiddleware
 }
 
 func (middleware *PingMiddleware) PacketHandler(request iproxy_net.ITcpRequest) {
