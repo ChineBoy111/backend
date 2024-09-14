@@ -3,14 +3,14 @@ package proxy_net
 import "bronya.com/proxy/iproxy_net"
 
 type TcpRequest struct {
-	connector iproxy_net.ITcpConnector
-	packet    []byte
+	Connector iproxy_net.ITcpConnector
+	Packet    []byte
 }
 
-func (tcpRequest *TcpRequest) GetConnector() iproxy_net.ITcpConnector {
-	return tcpRequest.connector
+func (request *TcpRequest) GetConnector() iproxy_net.ITcpConnector {
+	return request.Connector
 }
 
-func (tcpRequest *TcpRequest) GetPacket() []byte {
-	return tcpRequest.packet
+func (request *TcpRequest) GetPacket() []byte {
+	return request.Packet
 }
