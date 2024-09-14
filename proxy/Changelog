@@ -1,2 +1,2 @@
-./ziface ==> ./proxy_inet
+./ziface ==> ./iproxy_net
 ./znet   ==> ./proxy_net

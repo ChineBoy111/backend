@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-// TcpServer 实现 ITcpServer 接口
+// TcpServer 实现 IServer 接口
 type TcpServer struct {
 	// tcp 服务器名
 	Name string
@@ -42,14 +42,14 @@ func (tcpServer *TcpServer) Start() {
 		var connId uint32 = 0
 		//! 阻塞等待客户端的 tcp 连接请求
 		for {
-			socket, err := tcpListener.AcceptTCP() // 收到客户端的 tcp 连接请求
+			conn, err := tcpListener.AcceptTCP() // 收到客户端的 tcp 连接请求
 			if err != nil {
 				log.Println("AcceptTCP err", err.Error())
 				continue
 			}
 
 			//! 已建立连接的 tcpConn
-			tcpConn := NewTcpConn(socket, connId, DataHandler)
+			tcpConn := NewTcpConnector(conn, connId, DataHandler)
 			connId++
 			go tcpConn.Start() //! 负责处理 tcp 连接的 goroutine
 		}
@@ -81,7 +81,7 @@ func (tcpServer *TcpServer) Stop() {
 }
 
 // NewServer 创建 TcpServer 实例
-func NewServer(name string) iproxy_net.ITcpServer {
+func NewServer(name string) iproxy_net.IServer {
 	tcpServer := TcpServer{
 		Name:  name,      // 服务器名
 		IpVer: "tcp4",    // ip 版本
