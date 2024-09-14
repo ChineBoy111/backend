@@ -11,7 +11,7 @@ type TcpConnector struct {
 	Conn         *net.TCPConn              // tcp 套接字
 	ConnId       uint32                    // tcp 连接 id
 	NotifyClosed chan struct{}             // 通知 tcp 连接已关闭的通道
-	isClosed     bool                      // tcp 连接是否已关闭
+	IsClosed     bool                      // tcp 连接是否已关闭
 	Middleware   iproxy_net.ITcpMiddleware // tcp 服务中间件
 }
 
@@ -21,7 +21,7 @@ func NewTcpConnector(conn *net.TCPConn, connId uint32, middleware iproxy_net.ITc
 		Conn:         conn,
 		ConnId:       connId,
 		NotifyClosed: make(chan struct{}, 1),
-		isClosed:     false,
+		IsClosed:     false,
 		Middleware:   middleware,
 	}
 	return tcpConnector
@@ -29,7 +29,7 @@ func NewTcpConnector(conn *net.TCPConn, connId uint32, middleware iproxy_net.ITc
 
 // Start 启动 tcp 连接
 func (connector *TcpConnector) Start() {
-	log.Println("Start connector, connId =", connector.ConnId)
+	log.Printf("[connId = %v] Start tcp connector\n", connector.ConnId)
 	//! 负责从 connector.conn 中读的 goroutine
 	go connector.StartReader()
 	//! 负责向 connector.conn 中写的 goroutine
@@ -47,7 +47,7 @@ func (connector *TcpConnector) StartReader() {
 		buf := make([]byte, 512)
 		_ /* readBytes */, err := connector.Conn.Read(buf)
 		if err != nil {
-			log.Printf("[connId = %v] Read err %v\n", connector.ConnId, err.Error())
+			log.Printf("[connId = %v] Read err: %v\n", connector.ConnId, err.Error())
 			continue
 		}
 
@@ -68,13 +68,13 @@ func (connector *TcpConnector) StartReader() {
 // Stop 停止 tcp 连接
 func (connector *TcpConnector) Stop() {
 	log.Printf("[connId = %v] Stop connector\n", connector.ConnId)
-	if connector.isClosed {
+	if connector.IsClosed {
 		return
 	}
-	connector.isClosed = true
+	connector.IsClosed = true
 	err := connector.Conn.Close()
 	if err != nil {
-		log.Printf("[connId = %v] Stop connector err\n", connector.ConnId)
+		log.Printf("[connId = %v] Stop connector err: %v\n", connector.ConnId, err.Error())
 	}
 	close(connector.NotifyClosed)
 }

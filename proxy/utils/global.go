@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"bronya.com/proxy/iproxy_net"
 	"encoding/json"
 	"log"
 	"os"
@@ -9,25 +8,26 @@ import (
 
 type IGlobal struct {
 	Name          string // 服务器名
-	Ver           string // 服务器版本
-	Ip            string // 服务器监听的 ip 地址
+	Version       string // 服务器版本
+	Protocol      string // 协议
+	HostIp        string // 监听的 ip 地址
+	Port          int    // 监听的端口
 	MaxConn       int    // 最大连接数
 	MaxPacketSize int    // 最大数据包大小
-	TcpPort       int    // tcp 服务器监听的端口
-	TcpServer     iproxy_net.ITcpServer
 }
 
 var Global *IGlobal
 
-// ! init 函数只会执行 1 次
+// ! init 函数只执行 1 次
 func init() {
 	Global = &IGlobal{
-		Name:          "WanProxy",
-		Ver:           "1.0",
-		Ip:            "127.0.0.1",
-		MaxConn:       100,
+		Name:          "Proxy",
+		Version:       "1.0",
+		Protocol:      "tcp4",
+		HostIp:        "0.0.0.0",
+		Port:          8080,
+		MaxConn:       1,
 		MaxPacketSize: 512,
-		TcpPort:       3333,
 	}
 	Global.Load()
 }

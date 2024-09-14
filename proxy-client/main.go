@@ -11,7 +11,7 @@ func main() {
 	time.Sleep(1 * time.Second)
 
 	//! 连接到指定的 IP 地址
-	conn, err := net.Dial("tcp4", "127.0.0.1:3333")
+	conn, err := net.Dial("tcp4", "127.0.0.1:3300")
 	if err != nil {
 		log.Fatalf("Start client error %v\n", err.Error())
 	}

@@ -1,6 +1,9 @@
 {
-  "Name": "WAN proxy",
-  "Host": "127.0.0.1",
-  "TcpPort": 3333,
-  "MaxConn": 3
+  "Name": "WanProxy",
+  "Ver": "1.0",
+  "Protocol": "tcp4",
+  "HostIp": "0.0.0.0",
+  "Port": 3300,
+  "MaxConn": 1,
+  "MaxPacketSize": 512
 }

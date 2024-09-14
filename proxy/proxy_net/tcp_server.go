@@ -2,6 +2,7 @@ package proxy_net
 
 import (
 	"bronya.com/proxy/iproxy_net"
+	"bronya.com/proxy/utils"
 	"fmt"
 	"log"
 	"net"
@@ -9,39 +10,38 @@ import (
 
 // TcpServer 实现 ITcpServer 接口
 type TcpServer struct {
-	Name       string                    // tcp 服务器名
-	IpVer      string                    // ip 版本
-	Ip         string                    // 监听的 ip 地址
+	Protocol   string                    // 协议
+	HostIp     string                    // 监听的主机 ip 地址
 	Port       int                       // 监听的端口
 	Middleware iproxy_net.ITcpMiddleware // tcp 服务中间件
 }
 
 // Start 启动 tcp 服务器
 func (server *TcpServer) Start() {
-	log.Printf("Start server %v, ip %v, port %v\n", server.Name, server.Ip, server.Port)
+	log.Printf("Start server %vv%v\n", utils.Global.Name, utils.Global.Version)
 	go func() { //! 负责监听所有 ip 地址的 tcp 连接请求的 goroutine
 
 		//! 解析 tcp 地址
-		tcpAddr, err := net.ResolveTCPAddr(server.IpVer, fmt.Sprintf("%v:%v", server.Ip, server.Port))
+		tcpAddr, err := net.ResolveTCPAddr(server.Protocol, fmt.Sprintf("%v:%v", server.HostIp, server.Port))
 		if err != nil {
-			log.Println("ResolveTCPAddr err", err.Error())
+			log.Println("Resolve tcp addr err:", err.Error())
 			return
 		}
 
 		//! 监听所有 ip 地址的 tcp 连接请求
-		tcpListener, err := net.ListenTCP(server.IpVer, tcpAddr)
+		tcpListener, err := net.ListenTCP(server.Protocol, tcpAddr)
 		if err != nil {
-			log.Println("ListenTCP err", err.Error())
+			log.Println("Listen tcp err:", err.Error())
 			return
 		}
-		log.Printf("Start server %v ok, listening %v:%v\n", server.Name, server.Ip, server.Port)
+		log.Printf("Start server %vv%v ok, listening %v:%v\n", utils.Global.Name, utils.Global.Version, server.HostIp, server.Port)
 
 		var connId uint32 = 0
 		//! 阻塞等待客户端的 tcp 连接请求
 		for {
 			conn, err := tcpListener.AcceptTCP() // 收到客户端的 tcp 连接请求
 			if err != nil {
-				log.Println("AcceptTCP err", err.Error())
+				log.Println("Accept tcp err:", err.Error())
 				continue
 			}
 
@@ -73,12 +73,11 @@ func (server *TcpServer) SetMiddleware(middleware iproxy_net.ITcpMiddleware) {
 }
 
 // NewTcpServer 创建 TcpServer 实例
-func NewTcpServer(name string) iproxy_net.ITcpServer {
+func NewTcpServer() iproxy_net.ITcpServer {
 	server := TcpServer{
-		Name:       name,      // 服务器名
-		IpVer:      "tcp4",    // ip 版本
-		Ip:         "0.0.0.0", // 监听所有 ip 地址的 tcp 连接请求
-		Port:       3333,      // 监听的端口
+		Protocol:   utils.Global.Protocol, // 协议
+		HostIp:     utils.Global.HostIp,   // 监听所有 ip 地址的 tcp 连接请求
+		Port:       utils.Global.Port,     // 监听的 tcp 端口
 		Middleware: nil,
 	}
 	return &server
