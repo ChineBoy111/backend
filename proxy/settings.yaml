@@ -1,5 +1,0 @@
-server:
-  name: wanproxy
-  IPVersion: ipv4
-  IP: 0.0.0.0
-  Port: 3333
