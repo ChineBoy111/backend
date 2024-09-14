@@ -19,23 +19,20 @@ type IGlobal struct {
 
 var Global *IGlobal
 
-func NewGlobal() *IGlobal {
-	if Global == nil {
-		Global = &IGlobal{
-			Name:          "WAN Proxy",
-			Ver:           "1.0",
-			Ip:            "127.0.0.1",
-			MaxConn:       100,
-			MaxPacketSize: 512,
-			TcpPort:       3333,
-		}
+// ! init 函数只会执行 1 次
+func init() {
+	Global = &IGlobal{
+		Name:          "WAN Proxy",
+		Ver:           "1.0",
+		Ip:            "127.0.0.1",
+		MaxConn:       100,
+		MaxPacketSize: 512,
+		TcpPort:       3333,
 	}
 	Global.Load()
-	return Global
 }
 
 func (*IGlobal) Load() {
-	Global = NewGlobal()
 	byteArr, err := os.ReadFile("./proxy.json")
 	if err != nil {
 		log.Println("Read file err", err.Error())
