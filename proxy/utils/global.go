@@ -22,7 +22,7 @@ var Global *IGlobal
 // ! init 函数只会执行 1 次
 func init() {
 	Global = &IGlobal{
-		Name:          "WAN Proxy",
+		Name:          "WanProxy",
 		Ver:           "1.0",
 		Ip:            "127.0.0.1",
 		MaxConn:       100,

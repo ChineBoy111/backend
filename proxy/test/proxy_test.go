@@ -7,6 +7,5 @@ import (
 )
 
 func TestGlobal(t *testing.T) {
-	global := utils.NewGlobal()
-	log.Println(global)
+	log.Println(utils.Global)
 }
