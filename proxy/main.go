@@ -17,7 +17,7 @@ func (middleware *PingMiddleware) PacketHandler(request iproxy_net.ITcpRequest) 
 	}
 }
 func main() {
-	server := proxy_net.NewTcpServer("WAN proxy")
+	server := proxy_net.NewTcpServer("WAN Proxy")
 	server.SetMiddleware(&PingMiddleware{})
 	server.Serve()
 }

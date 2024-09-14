@@ -58,8 +58,6 @@ func (server *TcpServer) Start() {
 func (server *TcpServer) Serve() {
 	//! 启动 tcp 服务器，运行服务
 	server.Start()
-	//TODO
-
 	//! ==================== 阻塞等待 ====================
 	select {}
 }

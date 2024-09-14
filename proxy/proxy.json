@@ -1,0 +1,6 @@
+{
+  "Name": "WAN proxy",
+  "Host": "127.0.0.1",
+  "TcpPort": 3333,
+  "MaxConn": 3
+}

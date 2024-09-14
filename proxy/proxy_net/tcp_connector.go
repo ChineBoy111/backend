@@ -43,7 +43,7 @@ func (connector *TcpConnector) StartReader() {
 	defer connector.Stop()
 
 	for {
-		// 从 connector.conn 中读出数据到 buf 中，一次读取 512 字节
+		// 从 connector.conn 中读出 512 字节的数据到 buf 中
 		buf := make([]byte, 512)
 		_ /* readBytes */, err := connector.Conn.Read(buf)
 		if err != nil {
