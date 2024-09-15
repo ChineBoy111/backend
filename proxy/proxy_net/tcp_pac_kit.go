@@ -13,10 +13,12 @@ type TcpPacKit struct {
 
 var pacKit *TcpPacKit
 
+// ! init 函数只执行 1 次
 func init() {
 	pacKit = &TcpPacKit{}
 }
 
+// NewTcpPacKit 创建 TcpPacKit 结构体变量
 func NewTcpPacKit() *TcpPacKit {
 	return pacKit
 }

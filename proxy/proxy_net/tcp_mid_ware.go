@@ -11,8 +11,8 @@ type TcpBaseMidWare struct {
 func (midWare *TcpBaseMidWare) PreHandler(iproxy_net.ITcpReq) {
 }
 
-// Handler 处理收到的 tcp 数据
-func (midWare *TcpBaseMidWare) Handler(iproxy_net.ITcpReq) {
+// MsgHandler 处理拆包得到的 tcp 消息
+func (midWare *TcpBaseMidWare) MsgHandler(iproxy_net.ITcpReq) {
 }
 
 // PostHandler Handler 后的 hook 方法

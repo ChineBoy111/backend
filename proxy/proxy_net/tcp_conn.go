@@ -113,8 +113,8 @@ func (conn *TcpConn) GetSocket() *net.TCPConn {
 	return conn.Socket
 }
 
-// SendPacket 发送 tcp 数据包
-func (conn *TcpConn) SendPacket(msgId uint32, msgData []byte) error {
+// SendPac 发送 tcp 数据包
+func (conn *TcpConn) SendPac(msgId uint32, msgData []byte) error {
 	if conn.isClosed {
 		return errors.New("conn is closed")
 	}
