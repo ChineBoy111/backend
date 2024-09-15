@@ -2,6 +2,8 @@ package proxy_net
 
 import (
 	"bronya.com/proxy/iproxy_net"
+	"errors"
+	"io"
 	"log"
 	"net"
 )
@@ -10,12 +12,12 @@ import (
 type TcpConn struct {
 	Closed   chan struct{}              // 通知 tcp 连接已关闭的通道
 	Id       uint32                     // tcp 连接 id
-	MidWare  iproxy_net.ITcpBaseMidWare // tcp 服务中间件
+	MidWare  iproxy_net.ITcpBaseMidWare // tcp 消息中间件
 	Socket   *net.TCPConn               // tcp 套接字
 	isClosed bool                       // tcp 连接是否已关闭
 }
 
-// NewTcpConn 创建 TcpConn 实例
+// NewTcpConn 创建 TcpConn 结构体变量
 func NewTcpConn(socket *net.TCPConn, id uint32, midWare iproxy_net.ITcpBaseMidWare) *TcpConn {
 	conn := &TcpConn{
 		Closed:   make(chan struct{}, 1),
@@ -29,52 +31,69 @@ func NewTcpConn(socket *net.TCPConn, id uint32, midWare iproxy_net.ITcpBaseMidWa
 
 // Start 启动 tcp 连接
 func (conn *TcpConn) Start() {
-	log.Printf("[conn %v] Start tcp conn\n", conn.Id)
-	//! 负责从 conn.Socket 中读的 goroutine
+	log.Printf("conn.Id = %v. Start tcp conn\n", conn.Id)
+	//! 从 conn.Socket 中读的 goroutine
 	go conn.StartReader()
-	//! 负责向 conn.Socket 中写的 goroutine
+	//! 向 conn.Socket 中写的 goroutine
 	// go conn.StartWriter()
 }
 
-// StartReader 启动从 conn.Socket 中读的 goroutine
+// StartReader 从 conn.Socket 中读出 tcp 数据包 的 goroutine
 func (conn *TcpConn) StartReader() {
-	log.Printf("[conn %v] Start reader goroutine, remoteAddr = %v\n", conn.Id, conn.GetRemoteAddr())
-	defer log.Printf("[conn %v] Stop reader goroutine, remoteAddr = %v\n", conn.Id, conn.GetRemoteAddr())
+	log.Printf("conn.Id = %v. Start reader goroutine, remoteAddr = %v\n", conn.Id, conn.GetRemoteAddr())
+	defer log.Printf("conn.Id = %v. Stop reader goroutine, remoteAddr = %v\n", conn.Id, conn.GetRemoteAddr())
 	defer conn.Stop()
 
+	pacKit := NewTcpPacKit()
 	for {
-		// 从 conn.Socket 中读出 512 字节的数据到 buf 中
-		buf := make([]byte, 512)
-		_ /* readBytes */, err := conn.Socket.Read(buf)
+		// 第 1 次从 conn 中读出 8 字节的 pacHead (msgLen + msgId)
+		pacHead := make([]byte, pacKit.GetHeadLen())
+		_ /* readBytes */, err := io.ReadFull(conn.GetSocket(), pacHead)
 		if err != nil {
-			log.Printf("[conn %v] Read err %v\n", conn.Id, err.Error())
-			continue
+			log.Println("Read full err", err.Error())
+			break
 		}
+		// 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
+		msg, err := pacKit.Unpack(pacHead)
+		if err != nil {
+			log.Println("Unpack err", err.Error())
+			return
+		}
+		var data []byte
+		if msg.GetLen() > 0 {
+			// 第 2 次从 conn 中读出 pacBody (msgData)
+			data = make([]byte, msg.GetLen())
+			_ /* readBytes */, err = io.ReadFull(conn.Socket, data)
+			if err != nil {
+				log.Println("Read full err", err.Error())
+				break
+			}
+		}
+		msg.SetData(data)
 
 		req := TcpReq{
-			Conn:   conn,
-			Packet: buf,
+			Conn: conn,
+			Msg:  msg,
 		}
-
-		// 启动使用 tcp 服务中间件的 goroutine，处理收到的 tcp 数据包
-		go func(req_ iproxy_net.ITcpReq) {
-			conn.MidWare.PreHandler(req_)
-			conn.MidWare.Handler(req_)
-			conn.MidWare.PostHandler(req_)
+		// 使用 tcp 消息中间件的 goroutine，处理拆包得到的 tcp 消息
+		go func(req iproxy_net.ITcpReq) {
+			conn.MidWare.PreHandler(req)
+			conn.MidWare.MsgHandler(req)
+			conn.MidWare.PostHandler(req)
 		}(&req)
 	}
 }
 
 // Stop 停止 tcp 连接
 func (conn *TcpConn) Stop() {
-	log.Printf("[conn %v] Stop conn\n", conn.Id)
+	log.Printf("conn.Id = %v. Stop conn\n", conn.Id)
 	if conn.isClosed {
 		return
 	}
 	conn.isClosed = true
 	err := conn.Socket.Close()
 	if err != nil {
-		log.Printf("[conn %v] Stop conn err %v\n", conn.Id, err.Error())
+		log.Printf("conn.Id = %v. Stop conn err %v\n", conn.Id, err.Error())
 	}
 	close(conn.Closed)
 }
@@ -94,7 +113,20 @@ func (conn *TcpConn) GetSocket() *net.TCPConn {
 	return conn.Socket
 }
 
-// Send 发送 tcp 数据包给客户端
-func (conn *TcpConn) Send() {
-
+// SendPacket 发送 tcp 数据包
+func (conn *TcpConn) SendPacket(msgId uint32, msgData []byte) error {
+	if conn.isClosed {
+		return errors.New("conn is closed")
+	}
+	// 封包，将 msg 结构体变量序列化为 packet 字节数组（tcp 消息 -> tcp 数据包）
+	pac, err := pacKit.Pack(NewTcpMsg(msgId, msgData))
+	if err != nil {
+		log.Println("Pack err", err.Error())
+		return err
+	}
+	_ /* writeBytes */, err = conn.Socket.Write(pac)
+	if err != nil {
+		log.Println("Write err", err.Error())
+	}
+	return err
 }

@@ -1,9 +1,15 @@
 package iproxy_net
 
 type ITcpReq interface {
-	// GetConn 获取 tcpConn 对象
+	// GetConn 获取 TcpConn 结构体变量
 	GetConn() ITcpConn
 
-	// GetPacket 获取收到的 tcp 数据包
-	GetPacket() []byte
+	// GetMsgLen 获取 tcp 消息的长度
+	GetMsgLen() uint32
+
+	// GetMsgId 获取 tcp 消息的 id
+	GetMsgId() uint32
+
+	// GetMsgData 获取 tcp 消息的数据
+	GetMsgData() []byte
 }

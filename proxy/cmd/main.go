@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-type PingMiddleware struct {
+type PingMidWare struct {
 	proxy_net.TcpBaseMidWare
 }
 
-func (middleware *PingMiddleware) Handler(request iproxy_net.ITcpReq) {
+func (midWare *PingMidWare) MsgHandler(request iproxy_net.ITcpReq) {
 	_ /* writeBytes */, err := request.GetConn().GetSocket().Write([]byte("ping"))
 	if err != nil {
 		log.Println("Write err", err.Error())
@@ -19,6 +19,6 @@ func (middleware *PingMiddleware) Handler(request iproxy_net.ITcpReq) {
 
 func main() {
 	server := proxy_net.NewTcpServer()
-	server.SetMidWare(&PingMiddleware{})
+	server.SetMidWare(&PingMidWare{})
 	server.Serve()
 }

@@ -18,6 +18,6 @@ type ITcpConn interface {
 	// GetSocket 获取 tcp 套接字
 	GetSocket() *net.TCPConn
 
-	// Send 发送 tcp 数据包
-	Send()
+	// SendPacket 发送 tcp 数据包
+	SendPacket(msgId uint32, msgData []byte) error
 }

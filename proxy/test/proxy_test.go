@@ -40,37 +40,38 @@ func TestTcpPacKit(t *testing.T) {
 			defer waitGroup.Done()
 
 			for {
-				// 第 1 次从 conn 中读，读出 pacHead (msgLen + msgId)
-				pacHead := make([]byte, 8)
+				// 第 1 次从 conn 中读出 8 字节的 pacHead (msgLen + msgId)
+				pacHead := make([]byte, pacKit.GetHeadLen())
 				readBytes, err := io.ReadFull(conn, pacHead)
 				if err != nil || readBytes != 8 {
 					log.Println("Read full err", err.Error())
 					return
 				}
-				iMsg, err := pacKit.Unpack(pacHead)
+				// 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
+				msg, err := pacKit.Unpack(pacHead)
 				if err != nil {
 					log.Println("Unpack err", err.Error())
 					return
 				}
-
-				msg := iMsg.(*proxy_net.TcpMsg) // 类型断言
-				if msg.GetLen() > 0 {           // 数据包头部 pacHead 的 msgLen > 0
-					// 第 2 次从 conn 中读，读出 body (Data)
-					msg.Data = make([]byte, msg.Len)
-					readBytes, err = io.ReadFull(conn, msg.Data)
-					if err != nil || uint32(readBytes) != msg.Len {
+				var data []byte
+				if msg.GetLen() > 0 { //  msgLen > 0
+					// 第 2 次从 conn 中读出 pacBody (msgData)
+					data = make([]byte, msg.GetLen())
+					readBytes, err = io.ReadFull(conn, data)
+					if err != nil || uint32(readBytes) != msg.GetLen() {
 						log.Println("Read full err", err.Error())
 						return
 					}
 				}
-				log.Printf("==> Read msg.Len=%v, msg.Id=%v, msg.Data=%v\n", msg.Len, msg.Id, string(msg.Data))
+				msg.SetData(data)
+				log.Printf("Read msg: len=%v, id=%v, data=%v\n", msg.GetLen(), msg.GetId(), string(msg.GetData()))
 			}
 		}(conn)
 	}()
 
 	// 客户端
 	conn, err := net.Dial("tcp4", "127.0.0.1:8080")
-	//! 在闭包内封装错误处理
+	//! 使用闭包处理错误
 	defer func(conn net.Conn) {
 		err := conn.Close()
 		if err != nil {
@@ -83,7 +84,7 @@ func TestTcpPacKit(t *testing.T) {
 	}
 	pacKit := proxy_net.NewTcpPacKit()
 
-	// 封装第 1 个 tcp 数据包 pac1
+	//! 封装第 1 个 tcp 数据包 pac1
 	msg1 := &proxy_net.TcpMsg{
 		Len:  3,
 		Id:   0,
@@ -95,7 +96,7 @@ func TestTcpPacKit(t *testing.T) {
 		return
 	}
 
-	// 封装第 2 个 tcp 数据包 pac2
+	//! 封装第 2 个 tcp 数据包 pac2
 	msg2 := &proxy_net.TcpMsg{
 		Len:  5,
 		Id:   1,
@@ -107,7 +108,7 @@ func TestTcpPacKit(t *testing.T) {
 		return
 	}
 
-	// tcp 粘包
+	//! tcp 粘包
 	pac1 = append(pac1, pac2...)
 	_ /* writeBytes */, err = conn.Write(pac1)
 	if err != nil {

@@ -35,3 +35,12 @@ func (msg *TcpMsg) SetId(id uint32) {
 func (msg *TcpMsg) SetData(data []byte) {
 	msg.Data = data
 }
+
+// NewTcpMsg 创建 tcp 消息
+func NewTcpMsg(id uint32, data []byte) *TcpMsg {
+	return &TcpMsg{
+		Len:  uint32(len(data)),
+		Id:   id,
+		Data: data,
+	}
+}

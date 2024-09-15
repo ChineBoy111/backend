@@ -13,7 +13,7 @@ type TcpServer struct {
 	Proto   string                     // 协议
 	HostIp  string                     // 监听 HostIp 的 tcp 连接请求
 	Port    int                        // 监听的端口
-	MidWare iproxy_net.ITcpBaseMidWare // tcp 服务中间件
+	MidWare iproxy_net.ITcpBaseMidWare // tcp 消息中间件
 }
 
 // Start 启动 tcp 服务器
@@ -21,7 +21,7 @@ func (server *TcpServer) Start() {
 	log.Printf("Start server %v, ver %v\n", utils.Global.Name, utils.Global.Ver)
 	log.Println("Copyright (c) bronya.com")
 	log.Println("All rights reserved")
-	go func() { //! 负责监听 HostIp 的 tcp 连接请求的 goroutine
+	go func() { //! 监听 HostIp 的 tcp 连接请求的 goroutine
 
 		//! 解析 tcp 地址
 		tcpAddr, err := net.ResolveTCPAddr(server.Proto, fmt.Sprintf("%v:%v", server.HostIp, server.Port))
@@ -51,7 +51,7 @@ func (server *TcpServer) Start() {
 			tcpConn := NewTcpConn(conn, id, server.MidWare)
 			id++
 
-			go tcpConn.Start() //! 负责处理 tcp 连接的 goroutine
+			go tcpConn.Start() //! 处理 tcp 连接的 goroutine
 		}
 	}()
 }
@@ -68,12 +68,12 @@ func (server *TcpServer) Stop() {
 	//TODO
 }
 
-// SetMidWare 设置 tcp 服务中间件
+// SetMidWare 设置 tcp 消息中间件
 func (server *TcpServer) SetMidWare(middleware iproxy_net.ITcpBaseMidWare) {
 	server.MidWare = middleware
 }
 
-// NewTcpServer 创建 TcpServer 实例
+// NewTcpServer 创建 TcpServer 结构体变量
 func NewTcpServer() iproxy_net.ITcpServer {
 	server := TcpServer{
 		Proto:   utils.Global.Proto,  // 协议

@@ -4,8 +4,8 @@ type ITcpBaseMidWare interface {
 	// PreHandler Handler 前的 hook 方法
 	PreHandler(req ITcpReq)
 
-	// Handler 处理收到的 tcp 数据包
-	Handler(req ITcpReq)
+	// MsgHandler 处理拆包得到的 tcp 消息
+	MsgHandler(req ITcpReq)
 
 	// PostHandler Handler 后的 hook 方法
 	PostHandler(req ITcpReq)

@@ -11,8 +11,14 @@ import (
 type TcpPacKit struct {
 }
 
+var pacKit *TcpPacKit
+
+func init() {
+	pacKit = &TcpPacKit{}
+}
+
 func NewTcpPacKit() *TcpPacKit {
-	return &TcpPacKit{}
+	return pacKit
 }
 
 // GetHeadLen 获取 tcp 数据包的 head 长度
@@ -20,7 +26,7 @@ func (pacKit *TcpPacKit) GetHeadLen() uint32 {
 	return 8 // 4 bytes (Id uint32) + 4 bytes (Len uint32) = 8 bytes
 }
 
-// Pack tcp 封包，msg 结构体实例序列化为 packet 字节数组
+// Pack 封包，将 msg 结构体变量序列化为 packet 字节数组（tcp 消息 -> tcp 数据包）
 func (pacKit *TcpPacKit) Pack(msg iproxy_net.ITcpMsg) ([]byte, error) {
 	buf /* writer */ := bytes.NewBuffer([]byte{})
 	// 向 buf 中 写入 msgLen
@@ -39,15 +45,15 @@ func (pacKit *TcpPacKit) Pack(msg iproxy_net.ITcpMsg) ([]byte, error) {
 	return packet, nil
 }
 
-// Unpack tcp 拆包，packet 字节数组反序列化为 msg 结构体实例
+// Unpack 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
 func (pacKit *TcpPacKit) Unpack(packet []byte) (iproxy_net.ITcpMsg, error) {
 	reader := bytes.NewReader(packet)
 	msg := &TcpMsg{}
-	// 从 byteArr 中读出 msgLen 到 msg.Len
+	// 从 byteArr 中读出 msgLen 到 Msg.Len
 	if err := binary.Read(reader, binary.LittleEndian, &msg.Len); err != nil {
 		return nil, err
 	}
-	// 从 byteArr 中读出 msgId 到 msg.Id
+	// 从 byteArr 中读出 msgId 到 Msg.Id
 	if err := binary.Read(reader, binary.LittleEndian, &msg.Id); err != nil {
 		return nil, err
 	}

@@ -33,11 +33,11 @@ func init() {
 }
 
 func (*IGlobal) Load() {
-	byteArr, err := os.ReadFile("./proxy.json")
+	byteArr, err := os.ReadFile("../proxy.json")
 	if err != nil {
 		log.Printf("Read file err %v", err.Error())
 		return
 	}
-	// 解析 json 数据到 go 结构体变量
+	// 解析 json 数据到 Global 结构体变量
 	err = json.Unmarshal(byteArr, Global)
 }
