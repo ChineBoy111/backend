@@ -1,9 +1,9 @@
 {
   "Name": "WanProxy",
-  "Version": "8.0",
-  "Protocol": "tcp4",
+  "Ver": "8.0",
+  "BufSize": 512,
   "HostIp": "0.0.0.0",
-  "Port": 3300,
   "MaxConn": 1,
-  "MaxPacketSize": 512
+  "Port": 3300,
+  "Proto": "tcp4"
 }

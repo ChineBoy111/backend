@@ -7,13 +7,13 @@ import (
 )
 
 type IGlobal struct {
-	Name          string // 服务器名
-	Version       string // 服务器版本
-	Protocol      string // 协议
-	HostIp        string // 监听的 ip 地址
-	Port          int    // 监听的端口
-	MaxConn       int    // 最大连接数
-	MaxPacketSize int    // 最大数据包大小
+	Name    string // 服务器名
+	Ver     string // 服务器版本
+	BufSize int    // 缓冲区大小
+	HostIp  string // 监听的 ip 地址
+	MaxConn int    // 最大连接数
+	Port    int    // 监听的端口
+	Proto   string // 协议
 }
 
 var Global *IGlobal
@@ -21,13 +21,13 @@ var Global *IGlobal
 // ! init 函数只执行 1 次
 func init() {
 	Global = &IGlobal{
-		Name:          "Proxy",
-		Version:       "1.0",
-		Protocol:      "tcp4",
-		HostIp:        "0.0.0.0",
-		Port:          8080,
-		MaxConn:       1,
-		MaxPacketSize: 512,
+		Name:    "Proxy",
+		Ver:     "1.0",
+		BufSize: 512,
+		HostIp:  "0.0.0.0",
+		MaxConn: 1,
+		Port:    8080,
+		Proto:   "tcp4",
 	}
 	Global.Load()
 }

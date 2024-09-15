@@ -2,7 +2,6 @@ package iproxy_net
 
 // ITcpServer tcp 服务器接口
 type ITcpServer interface {
-
 	// Start 启动 tcp 服务器
 	Start()
 
@@ -12,6 +11,6 @@ type ITcpServer interface {
 	// Stop 停止 tcp 服务器
 	Stop()
 
-	// SetMiddleware 设置 tcp 服务中间件
-	SetMiddleware(middleware ITcpMiddleware)
+	// SetMidware 设置 tcp 服务中间件
+	SetMidware(midware ITcpBaseMidware)
 }
