@@ -8,28 +8,28 @@ import (
 	"errors"
 )
 
-type TcpPacKit struct {
+type TcpPacMan struct {
 }
 
-var pacKit *TcpPacKit
+var pacMan *TcpPacMan
 
 // ! init 函数只执行 1 次
 func init() {
-	pacKit = &TcpPacKit{}
+	pacMan = &TcpPacMan{}
 }
 
-// NewTcpPacKit 创建 TcpPacKit 结构体变量
-func NewTcpPacKit() *TcpPacKit {
-	return pacKit
+// NewTcpPacMan 创建 TcpPacMan 结构体变量
+func NewTcpPacMan() *TcpPacMan {
+	return pacMan
 }
 
 // GetHeadLen 获取 tcp 数据包的 head 长度
-func (pacKit *TcpPacKit) GetHeadLen() uint32 {
+func (pacMan *TcpPacMan) GetHeadLen() uint32 {
 	return 8 // 4 bytes (Id uint32) + 4 bytes (Len uint32) = 8 bytes
 }
 
 // Pack 封包，将 msg 结构体变量序列化为 packet 字节数组（tcp 消息 -> tcp 数据包）
-func (pacKit *TcpPacKit) Pack(msg inetwork.ITcpMsg) ([]byte, error) {
+func (pacMan *TcpPacMan) Pack(msg inetwork.ITcpMsg) ([]byte, error) {
 	buf /* writer */ := bytes.NewBuffer([]byte{})
 	// 向 buf 中 写入 msgLen
 	if err := binary.Write(buf, binary.LittleEndian, msg.GetLen()); err != nil {
@@ -48,7 +48,7 @@ func (pacKit *TcpPacKit) Pack(msg inetwork.ITcpMsg) ([]byte, error) {
 }
 
 // Unpack 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
-func (pacKit *TcpPacKit) Unpack(pac []byte) (inetwork.ITcpMsg, error) {
+func (pacMan *TcpPacMan) Unpack(pac []byte) (inetwork.ITcpMsg, error) {
 	reader := bytes.NewReader(pac)
 	msg := &TcpMsg{}
 	// 从 byteArr 中读出 msgLen 到 Msg.Len

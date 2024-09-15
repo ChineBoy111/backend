@@ -9,8 +9,8 @@ import (
 	"testing"
 )
 
-// go test -run TestTcpPacKit
-func TestTcpPacKit(t *testing.T) {
+// go test -run TestTcpPacMan
+func TestTcpPacMan(t *testing.T) {
 	waitGroup := sync.WaitGroup{}
 	defer waitGroup.Wait()
 
@@ -29,20 +29,20 @@ func TestTcpPacKit(t *testing.T) {
 			log.Println("Accept err", err.Error())
 			return
 		}
-		pacKit := network.NewTcpPacKit()
+		pacMan := network.NewTcpPacMan()
 		go func(conn net.Conn) {
 			waitGroup.Add(1)
 			defer waitGroup.Done()
 
 			for {
 				// 第 1 次从 conn 中读出 8 字节的 pacHead (msgLen + msgId)
-				pacHead := make([]byte, pacKit.GetHeadLen())
+				pacHead := make([]byte, pacMan.GetHeadLen())
 				if _ /* readBytes == 8 */, err := io.ReadFull(conn, pacHead); err != nil {
 					log.Println("Read full err", err.Error())
 					return
 				}
 				// 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
-				msg, err := pacKit.Unpack(pacHead)
+				msg, err := pacMan.Unpack(pacHead)
 				if err != nil {
 					log.Println("Unpack err", err.Error())
 					return
@@ -77,14 +77,14 @@ func TestTcpPacKit(t *testing.T) {
 		}
 	}(conn)
 
-	pacKit := network.NewTcpPacKit()
+	pacMan := network.NewTcpPacMan()
 	//! 封装第 1 个 tcp 数据包 pac1
 	msg1 := &network.TcpMsg{
 		Len:  3,
 		Id:   0,
-		Data: []byte{'W', 'A', 'N'},
+		Data: []byte{'W', 'a', 'n'},
 	}
-	pac1, err := pacKit.Pack(msg1)
+	pac1, err := pacMan.Pack(msg1)
 	if err != nil {
 		log.Println("Pack err", err.Error())
 		return
@@ -96,7 +96,7 @@ func TestTcpPacKit(t *testing.T) {
 		Id:   1,
 		Data: []byte{'P', 'r', 'o', 'x', 'y'},
 	}
-	pac2, err := pacKit.Pack(msg2)
+	pac2, err := pacMan.Pack(msg2)
 	if err != nil {
 		log.Println("Pack err", err.Error())
 		return

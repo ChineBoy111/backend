@@ -29,9 +29,9 @@ func TestCli(t *testing.T) {
 		}
 	}(conn)
 
-	pacKit := network.NewTcpPacKit()
+	pacMan := network.NewTcpPacMan()
 	for {
-		pac, err := pacKit.Pack(network.NewTcpMsg(0, []byte("Hello WanProxy")))
+		pac, err := pacMan.Pack(network.NewTcpMsg(0, []byte("Hello WanProxy")))
 		if err != nil {
 			log.Println("Pack err", err.Error())
 			return
@@ -42,13 +42,13 @@ func TestCli(t *testing.T) {
 		}
 		//! 客户端接收服务器响应的数据
 		// 第 1 次从 conn 中读出 8 字节的 pacHead (msgLen + msgId)
-		pacHead := make([]byte, pacKit.GetHeadLen())
+		pacHead := make([]byte, pacMan.GetHeadLen())
 		if _ /* readBytes */, err := io.ReadFull(conn, pacHead); err != nil {
 			log.Println("Read full err", err.Error())
 			return
 		}
 		// 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
-		msg, err := pacKit.Unpack(pacHead)
+		msg, err := pacMan.Unpack(pacHead)
 		if err != nil {
 			log.Println("Unpack err", err.Error())
 			return

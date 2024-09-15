@@ -1,6 +1,6 @@
 package inetwork
 
-type ITcpPacKit interface {
+type ITcpPacMan interface {
 	// GetHeadLen 获取 tcp 数据包的 head 长度
 	GetHeadLen() uint32
 

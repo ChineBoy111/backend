@@ -10,15 +10,15 @@ import (
 
 // TcpConn 实现 ITcpConn 接口
 type TcpConn struct {
-	Closed   chan struct{}            // 通知 tcp 连接已关闭的通道
-	Id       uint32                   // tcp 连接 id
-	MidWare  inetwork.ITcpBaseMidWare // tcp 消息中间件
-	Socket   *net.TCPConn             // tcp 套接字
-	isClosed bool                     // tcp 连接是否已关闭
+	Closed   chan struct{}        // 通知 tcp 连接已关闭的通道
+	Id       uint32               // tcp 连接 id
+	MidWare  inetwork.ITcpMidWare // tcp 消息中间件
+	Socket   *net.TCPConn         // tcp 套接字
+	isClosed bool                 // tcp 连接是否已关闭
 }
 
 // NewTcpConn 创建 TcpConn 结构体变量
-func NewTcpConn(socket *net.TCPConn, id uint32, midWare inetwork.ITcpBaseMidWare) *TcpConn {
+func NewTcpConn(socket *net.TCPConn, id uint32, midWare inetwork.ITcpMidWare) *TcpConn {
 	conn := &TcpConn{
 		Closed:   make(chan struct{}, 1),
 		Id:       id,
@@ -44,17 +44,17 @@ func (conn *TcpConn) StartReader() {
 	defer log.Printf("conn.Id = %v. Stop reader goroutine, remoteAddr = %v\n", conn.Id, conn.GetRemoteAddr())
 	defer conn.Stop()
 
-	pacKit := NewTcpPacKit()
+	pacMan := NewTcpPacMan()
 	for {
 		// 第 1 次从 conn 中读出 8 字节的 pacHead (msgLen + msgId)
-		pacHead := make([]byte, pacKit.GetHeadLen())
+		pacHead := make([]byte, pacMan.GetHeadLen())
 		_ /* readBytes */, err := io.ReadFull(conn.GetSocket(), pacHead)
 		if err != nil {
 			log.Println("Read full err", err.Error())
 			break
 		}
 		// 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
-		msg, err := pacKit.Unpack(pacHead)
+		msg, err := pacMan.Unpack(pacHead)
 		if err != nil {
 			log.Println("Unpack err", err.Error())
 			return
@@ -119,7 +119,7 @@ func (conn *TcpConn) SendPac(msgId uint32, msgData []byte) error {
 		return errors.New("conn is closed")
 	}
 	// 封包，将 msg 结构体变量序列化为 packet 字节数组（tcp 消息 -> tcp 数据包）
-	pac, err := pacKit.Pack(NewTcpMsg(msgId, msgData))
+	pac, err := pacMan.Pack(NewTcpMsg(msgId, msgData))
 	if err != nil {
 		log.Println("Pack err", err.Error())
 		return err

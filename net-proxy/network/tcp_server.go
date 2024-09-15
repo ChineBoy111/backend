@@ -10,10 +10,10 @@ import (
 
 // TcpServer 实现 ITcpServer 接口
 type TcpServer struct {
-	Proto   string                   // 协议
-	HostIp  string                   // 监听 HostIp 的 tcp 连接请求
-	Port    int                      // 监听的端口
-	MidWare inetwork.ITcpBaseMidWare // tcp 消息中间件
+	Proto   string               // 协议
+	HostIp  string               // 监听 HostIp 的 tcp 连接请求
+	Port    int                  // 监听的端口
+	MidWare inetwork.ITcpMidWare // tcp 消息中间件
 }
 
 // Start 启动 tcp 服务器
@@ -69,7 +69,7 @@ func (server *TcpServer) Stop() {
 }
 
 // SetMidWare 设置 tcp 消息中间件
-func (server *TcpServer) SetMidWare(middleware inetwork.ITcpBaseMidWare) {
+func (server *TcpServer) SetMidWare(middleware inetwork.ITcpMidWare) {
 	server.MidWare = middleware
 }
 
