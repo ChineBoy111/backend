@@ -1,8 +1,8 @@
-package proxy_net
+package proxy
 
 import (
-	"bronya.com/proxy/iproxy_net"
-	"bronya.com/proxy/utils"
+	"bronya.com/net-proxy/iproxy"
+	"bronya.com/net-proxy/utils"
 	"fmt"
 	"log"
 	"net"
@@ -10,10 +10,10 @@ import (
 
 // TcpServer 实现 ITcpServer 接口
 type TcpServer struct {
-	Proto   string                     // 协议
-	HostIp  string                     // 监听 HostIp 的 tcp 连接请求
-	Port    int                        // 监听的端口
-	MidWare iproxy_net.ITcpBaseMidWare // tcp 消息中间件
+	Proto   string                 // 协议
+	HostIp  string                 // 监听 HostIp 的 tcp 连接请求
+	Port    int                    // 监听的端口
+	MidWare iproxy.ITcpBaseMidWare // tcp 消息中间件
 }
 
 // Start 启动 tcp 服务器
@@ -36,7 +36,7 @@ func (server *TcpServer) Start() {
 			log.Println("Listen tcp err", err.Error())
 			return
 		}
-		log.Printf("Server listening %v:%v\n", server.HostIp, server.Port)
+		log.Printf("Listening %v:%v\n", server.HostIp, server.Port)
 
 		var id uint32 = 0
 		//! 阻塞等待客户端的 tcp 连接请求
@@ -69,12 +69,12 @@ func (server *TcpServer) Stop() {
 }
 
 // SetMidWare 设置 tcp 消息中间件
-func (server *TcpServer) SetMidWare(middleware iproxy_net.ITcpBaseMidWare) {
+func (server *TcpServer) SetMidWare(middleware iproxy.ITcpBaseMidWare) {
 	server.MidWare = middleware
 }
 
-// NewTcpServer 创建 TcpServer 结构体变量
-func NewTcpServer() iproxy_net.ITcpServer {
+// NewTcpServer 创建 tcp 服务器
+func NewTcpServer() iproxy.ITcpServer {
 	server := TcpServer{
 		Proto:   utils.Global.Proto,  // 协议
 		HostIp:  utils.Global.HostIp, // 监听 HostIp 的 tcp 连接请求

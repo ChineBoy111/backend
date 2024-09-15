@@ -1,5 +1,5 @@
 {
-  "Name": "WANProxy",
+  "Name": "WanProxy",
   "Ver": "v0.5",
   "HostIp": "0.0.0.0",
   "Port": 3300,

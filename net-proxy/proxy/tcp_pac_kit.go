@@ -1,8 +1,8 @@
-package proxy_net
+package proxy
 
 import (
-	"bronya.com/proxy/iproxy_net"
-	"bronya.com/proxy/utils"
+	"bronya.com/net-proxy/iproxy"
+	"bronya.com/net-proxy/utils"
 	"bytes"
 	"encoding/binary"
 	"errors"
@@ -29,7 +29,7 @@ func (pacKit *TcpPacKit) GetHeadLen() uint32 {
 }
 
 // Pack 封包，将 msg 结构体变量序列化为 packet 字节数组（tcp 消息 -> tcp 数据包）
-func (pacKit *TcpPacKit) Pack(msg iproxy_net.ITcpMsg) ([]byte, error) {
+func (pacKit *TcpPacKit) Pack(msg iproxy.ITcpMsg) ([]byte, error) {
 	buf /* writer */ := bytes.NewBuffer([]byte{})
 	// 向 buf 中 写入 msgLen
 	if err := binary.Write(buf, binary.LittleEndian, msg.GetLen()); err != nil {
@@ -48,7 +48,7 @@ func (pacKit *TcpPacKit) Pack(msg iproxy_net.ITcpMsg) ([]byte, error) {
 }
 
 // Unpack 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
-func (pacKit *TcpPacKit) Unpack(pac []byte) (iproxy_net.ITcpMsg, error) {
+func (pacKit *TcpPacKit) Unpack(pac []byte) (iproxy.ITcpMsg, error) {
 	reader := bytes.NewReader(pac)
 	msg := &TcpMsg{}
 	// 从 byteArr 中读出 msgLen 到 Msg.Len

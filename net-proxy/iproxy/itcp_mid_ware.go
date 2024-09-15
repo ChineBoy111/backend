@@ -1,4 +1,4 @@
-package iproxy_net
+package iproxy
 
 type ITcpBaseMidWare interface {
 	// PreHandler Handler 前的 hook 方法

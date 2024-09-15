@@ -1,4 +1,4 @@
-package iproxy_net
+package iproxy
 
 type ITcpPacKit interface {
 	// GetHeadLen 获取 tcp 数据包的 head 长度

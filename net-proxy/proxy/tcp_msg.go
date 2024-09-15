@@ -1,4 +1,4 @@
-package proxy_net
+package proxy
 
 type TcpMsg struct {
 	Len  uint32

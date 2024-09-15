@@ -1,4 +1,4 @@
-package iproxy_net
+package iproxy
 
 type ITcpMsg interface {
 	// GetLen 获取 tcp 消息长度
