@@ -1,4 +1,4 @@
-package iproxy
+package inetwork
 
 import "net"
 

@@ -1,7 +1,7 @@
 package test
 
 import (
-	"bronya.com/net-proxy/proxy"
+	"bronya.com/net-proxy/network"
 	"io"
 	"log"
 	"net"
@@ -29,9 +29,9 @@ func TestCli(t *testing.T) {
 		}
 	}(conn)
 
-	pacKit := proxy.NewTcpPacKit()
+	pacKit := network.NewTcpPacKit()
 	for {
-		pac, err := pacKit.Pack(proxy.NewTcpMsg(0, []byte("Hello WanProxy")))
+		pac, err := pacKit.Pack(network.NewTcpMsg(0, []byte("Hello WanProxy")))
 		if err != nil {
 			log.Println("Pack err", err.Error())
 			return

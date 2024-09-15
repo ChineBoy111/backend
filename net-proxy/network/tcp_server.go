@@ -1,7 +1,7 @@
-package proxy
+package network
 
 import (
-	"bronya.com/net-proxy/iproxy"
+	"bronya.com/net-proxy/inetwork"
 	"bronya.com/net-proxy/utils"
 	"fmt"
 	"log"
@@ -10,10 +10,10 @@ import (
 
 // TcpServer 实现 ITcpServer 接口
 type TcpServer struct {
-	Proto   string                 // 协议
-	HostIp  string                 // 监听 HostIp 的 tcp 连接请求
-	Port    int                    // 监听的端口
-	MidWare iproxy.ITcpBaseMidWare // tcp 消息中间件
+	Proto   string                   // 协议
+	HostIp  string                   // 监听 HostIp 的 tcp 连接请求
+	Port    int                      // 监听的端口
+	MidWare inetwork.ITcpBaseMidWare // tcp 消息中间件
 }
 
 // Start 启动 tcp 服务器
@@ -69,12 +69,12 @@ func (server *TcpServer) Stop() {
 }
 
 // SetMidWare 设置 tcp 消息中间件
-func (server *TcpServer) SetMidWare(middleware iproxy.ITcpBaseMidWare) {
+func (server *TcpServer) SetMidWare(middleware inetwork.ITcpBaseMidWare) {
 	server.MidWare = middleware
 }
 
 // NewTcpServer 创建 tcp 服务器
-func NewTcpServer() iproxy.ITcpServer {
+func NewTcpServer() inetwork.ITcpServer {
 	server := TcpServer{
 		Proto:   utils.Global.Proto,  // 协议
 		HostIp:  utils.Global.HostIp, // 监听 HostIp 的 tcp 连接请求

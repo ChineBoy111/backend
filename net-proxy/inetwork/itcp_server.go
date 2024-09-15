@@ -1,4 +1,4 @@
-package iproxy
+package inetwork
 
 // ITcpServer tcp 服务器接口
 type ITcpServer interface {

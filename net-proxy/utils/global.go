@@ -33,7 +33,7 @@ func init() {
 }
 
 func (*IGlobal) Load() {
-	byteArr, err := os.ReadFile("./proxy.json")
+	byteArr, err := os.ReadFile("./network.json")
 	if err != nil {
 		log.Printf("Read file err %v", err.Error())
 		return

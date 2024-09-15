@@ -1,4 +1,4 @@
-package iproxy
+package inetwork
 
 type ITcpReq interface {
 	// GetConn 获取 TcpConn 结构体变量

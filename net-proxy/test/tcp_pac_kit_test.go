@@ -1,7 +1,7 @@
 package test
 
 import (
-	"bronya.com/net-proxy/proxy"
+	"bronya.com/net-proxy/network"
 	"io"
 	"log"
 	"net"
@@ -29,7 +29,7 @@ func TestTcpPacKit(t *testing.T) {
 			log.Println("Accept err", err.Error())
 			return
 		}
-		pacKit := proxy.NewTcpPacKit()
+		pacKit := network.NewTcpPacKit()
 		go func(conn net.Conn) {
 			waitGroup.Add(1)
 			defer waitGroup.Done()
@@ -77,9 +77,9 @@ func TestTcpPacKit(t *testing.T) {
 		}
 	}(conn)
 
-	pacKit := proxy.NewTcpPacKit()
+	pacKit := network.NewTcpPacKit()
 	//! 封装第 1 个 tcp 数据包 pac1
-	msg1 := &proxy.TcpMsg{
+	msg1 := &network.TcpMsg{
 		Len:  3,
 		Id:   0,
 		Data: []byte{'W', 'A', 'N'},
@@ -91,7 +91,7 @@ func TestTcpPacKit(t *testing.T) {
 	}
 
 	//! 封装第 2 个 tcp 数据包 pac2
-	msg2 := &proxy.TcpMsg{
+	msg2 := &network.TcpMsg{
 		Len:  5,
 		Id:   1,
 		Data: []byte{'P', 'r', 'o', 'x', 'y'},

@@ -1,14 +1,14 @@
-package proxy
+package network
 
-import "bronya.com/net-proxy/iproxy"
+import "bronya.com/net-proxy/inetwork"
 
 type TcpReq struct {
-	Conn iproxy.ITcpConn
-	Msg  iproxy.ITcpMsg
+	Conn inetwork.ITcpConn
+	Msg  inetwork.ITcpMsg
 }
 
 // GetConn 获取 TcpConn 结构体变量
-func (req *TcpReq) GetConn() iproxy.ITcpConn {
+func (req *TcpReq) GetConn() inetwork.ITcpConn {
 	return req.Conn
 }
 
