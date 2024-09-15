@@ -43,13 +43,13 @@ func (pacKit *TcpPacKit) Pack(msg iproxy_net.ITcpMsg) ([]byte, error) {
 	if err := binary.Write(buf, binary.LittleEndian, msg.GetData()); err != nil {
 		return nil, err
 	}
-	packet := buf.Bytes()
-	return packet, nil
+	pac := buf.Bytes()
+	return pac, nil
 }
 
 // Unpack 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
-func (pacKit *TcpPacKit) Unpack(packet []byte) (iproxy_net.ITcpMsg, error) {
-	reader := bytes.NewReader(packet)
+func (pacKit *TcpPacKit) Unpack(pac []byte) (iproxy_net.ITcpMsg, error) {
+	reader := bytes.NewReader(pac)
 	msg := &TcpMsg{}
 	// 从 byteArr 中读出 msgLen 到 Msg.Len
 	if err := binary.Read(reader, binary.LittleEndian, &msg.Len); err != nil {
@@ -59,8 +59,8 @@ func (pacKit *TcpPacKit) Unpack(packet []byte) (iproxy_net.ITcpMsg, error) {
 	if err := binary.Read(reader, binary.LittleEndian, &msg.Id); err != nil {
 		return nil, err
 	}
-	if msg.Len > utils.Global.TcpMaxPacketSize {
-		return nil, errors.New("packet too big")
+	if msg.Len > utils.Global.TcpMaxPacSize {
+		return nil, errors.New("tcp packet too big")
 	}
 	return msg, nil
 }

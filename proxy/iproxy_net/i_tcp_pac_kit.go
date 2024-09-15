@@ -8,5 +8,5 @@ type ITcpPacKit interface {
 	Pack(msg ITcpMsg) ([]byte, error)
 
 	// Unpack 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
-	Unpack(packet []byte) (ITcpMsg, error)
+	Unpack(pac []byte) (ITcpMsg, error)
 }
