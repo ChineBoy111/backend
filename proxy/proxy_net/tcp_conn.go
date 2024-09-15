@@ -47,7 +47,7 @@ func (conn *TcpConn) StartReader() {
 		buf := make([]byte, 512)
 		_ /* readBytes */, err := conn.Socket.Read(buf)
 		if err != nil {
-			log.Printf("[conn %v] Read err: %v\n", conn.Id, err.Error())
+			log.Printf("[conn %v] Read err %v\n", conn.Id, err.Error())
 			continue
 		}
 
@@ -74,7 +74,7 @@ func (conn *TcpConn) Stop() {
 	conn.isClosed = true
 	err := conn.Socket.Close()
 	if err != nil {
-		log.Printf("[conn %v] Stop conn err: %v\n", conn.Id, err.Error())
+		log.Printf("[conn %v] Stop conn err %v\n", conn.Id, err.Error())
 	}
 	close(conn.Closed)
 }

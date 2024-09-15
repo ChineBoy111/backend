@@ -23,15 +23,15 @@ func (pacKit *TcpPacKit) GetHeadLen() uint32 {
 // Pack tcp 封包，msg 结构体实例序列化为 packet 字节数组
 func (pacKit *TcpPacKit) Pack(msg iproxy_net.ITcpMsg) ([]byte, error) {
 	buf /* writer */ := bytes.NewBuffer([]byte{})
-	// 向 buf 中 写入 Len
+	// 向 buf 中 写入 msgLen
 	if err := binary.Write(buf, binary.LittleEndian, msg.GetLen()); err != nil {
 		return nil, err
 	}
-	// 向 buf 中 写入 Id
+	// 向 buf 中 写入 msgId
 	if err := binary.Write(buf, binary.LittleEndian, msg.GetId()); err != nil {
 		return nil, err
 	}
-	// 向 buf 中写入 Data
+	// 向 buf 中写入 msgData
 	if err := binary.Write(buf, binary.LittleEndian, msg.GetData()); err != nil {
 		return nil, err
 	}
@@ -43,11 +43,11 @@ func (pacKit *TcpPacKit) Pack(msg iproxy_net.ITcpMsg) ([]byte, error) {
 func (pacKit *TcpPacKit) Unpack(packet []byte) (iproxy_net.ITcpMsg, error) {
 	reader := bytes.NewReader(packet)
 	msg := &TcpMsg{}
-	// 从 byteArr 中读出 Len 到 msg
+	// 从 byteArr 中读出 msgLen 到 msg.Len
 	if err := binary.Read(reader, binary.LittleEndian, &msg.Len); err != nil {
 		return nil, err
 	}
-	// 从 byteArr 中读出 Id 到 msg
+	// 从 byteArr 中读出 msgId 到 msg.Id
 	if err := binary.Read(reader, binary.LittleEndian, &msg.Id); err != nil {
 		return nil, err
 	}

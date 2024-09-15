@@ -9,7 +9,7 @@ import (
 type IGlobal struct {
 	Name             string // 服务器名
 	Ver              string // 服务器版本
-	HostIp           string // 监听的 ip 地址
+	HostIp           string // 监听 HostIp 的 tcp 连接请求
 	Port             int    // 监听的端口
 	Proto            string // 协议
 	TcpMaxConn       int    // tcp 最大连接数
@@ -35,7 +35,7 @@ func init() {
 func (*IGlobal) Load() {
 	byteArr, err := os.ReadFile("./proxy.json")
 	if err != nil {
-		log.Println("Read file err:", err.Error())
+		log.Printf("Read file err %v", err.Error())
 		return
 	}
 	// 解析 json 数据到 go 结构体变量

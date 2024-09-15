@@ -13,7 +13,7 @@ type PingMiddleware struct {
 func (middleware *PingMiddleware) Handler(request iproxy_net.ITcpReq) {
 	_ /* writeBytes */, err := request.GetConn().GetSocket().Write([]byte("ping"))
 	if err != nil {
-		log.Println("Write err:", err.Error())
+		log.Println("Write err", err.Error())
 	}
 }
 
