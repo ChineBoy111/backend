@@ -9,27 +9,27 @@ import (
 // TcpConn 实现 ITcpConn 接口
 type TcpConn struct {
 	Closed   chan struct{}              // 通知 tcp 连接已关闭的通道
-	ConnId   uint32                     // tcp 连接 id
-	Midware  iproxy_net.ITcpBaseMidware // tcp 服务中间件
+	Id       uint32                     // tcp 连接 id
+	MidWare  iproxy_net.ITcpBaseMidWare // tcp 服务中间件
 	Socket   *net.TCPConn               // tcp 套接字
 	isClosed bool                       // tcp 连接是否已关闭
 }
 
 // NewTcpConn 创建 TcpConn 实例
-func NewTcpConn(socket *net.TCPConn, connId uint32, midware iproxy_net.ITcpBaseMidware) *TcpConn {
-	tcpConn := &TcpConn{
+func NewTcpConn(socket *net.TCPConn, id uint32, midWare iproxy_net.ITcpBaseMidWare) *TcpConn {
+	conn := &TcpConn{
 		Closed:   make(chan struct{}, 1),
-		ConnId:   connId,
-		Midware:  midware,
+		Id:       id,
+		MidWare:  midWare,
 		Socket:   socket,
 		isClosed: false,
 	}
-	return tcpConn
+	return conn
 }
 
 // Start 启动 tcp 连接
 func (conn *TcpConn) Start() {
-	log.Printf("[connId = %v] Start tcp conn\n", conn.ConnId)
+	log.Printf("[conn %v] Start tcp conn\n", conn.Id)
 	//! 负责从 conn.Socket 中读的 goroutine
 	go conn.StartReader()
 	//! 负责向 conn.Socket 中写的 goroutine
@@ -38,8 +38,8 @@ func (conn *TcpConn) Start() {
 
 // StartReader 启动从 conn.Socket 中读的 goroutine
 func (conn *TcpConn) StartReader() {
-	log.Printf("[connId = %v] Start reader goroutine, remoteAddr = %v\n", conn.ConnId, conn.GetRemoteAddr())
-	defer log.Printf("[connId = %v] Stop reader goroutine, remoteAddr = %v\n", conn.ConnId, conn.GetRemoteAddr())
+	log.Printf("[conn %v] Start reader goroutine, remoteAddr = %v\n", conn.Id, conn.GetRemoteAddr())
+	defer log.Printf("[conn %v] Stop reader goroutine, remoteAddr = %v\n", conn.Id, conn.GetRemoteAddr())
 	defer conn.Stop()
 
 	for {
@@ -47,7 +47,7 @@ func (conn *TcpConn) StartReader() {
 		buf := make([]byte, 512)
 		_ /* readBytes */, err := conn.Socket.Read(buf)
 		if err != nil {
-			log.Printf("[connId = %v] Read err: %v\n", conn.ConnId, err.Error())
+			log.Printf("[conn %v] Read err: %v\n", conn.Id, err.Error())
 			continue
 		}
 
@@ -58,30 +58,30 @@ func (conn *TcpConn) StartReader() {
 
 		// 启动使用 tcp 服务中间件的 goroutine，处理收到的 tcp 数据包
 		go func(req_ iproxy_net.ITcpReq) {
-			conn.Midware.PreHandler(req_)
-			conn.Midware.Handler(req_)
-			conn.Midware.PostHandler(req_)
+			conn.MidWare.PreHandler(req_)
+			conn.MidWare.Handler(req_)
+			conn.MidWare.PostHandler(req_)
 		}(&req)
 	}
 }
 
 // Stop 停止 tcp 连接
 func (conn *TcpConn) Stop() {
-	log.Printf("[connId = %v] Stop conn\n", conn.ConnId)
+	log.Printf("[conn %v] Stop conn\n", conn.Id)
 	if conn.isClosed {
 		return
 	}
 	conn.isClosed = true
 	err := conn.Socket.Close()
 	if err != nil {
-		log.Printf("[connId = %v] Stop conn err: %v\n", conn.ConnId, err.Error())
+		log.Printf("[conn %v] Stop conn err: %v\n", conn.Id, err.Error())
 	}
 	close(conn.Closed)
 }
 
-// GetConnId 获取 tcp 连接 id
-func (conn *TcpConn) GetConnId() uint32 {
-	return conn.ConnId
+// GetId 获取 tcp 连接 id
+func (conn *TcpConn) GetId() uint32 {
+	return conn.Id
 }
 
 // GetRemoteAddr 获取客户端的 ip 地址和端口

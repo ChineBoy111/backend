@@ -1,37 +1,37 @@
 package proxy_net
 
 type TcpMsg struct {
-	MsgLen  uint32
-	MsgId   uint32
-	MsgData []byte
+	Len  uint32
+	Id   uint32
+	Data []byte
 }
 
-// GetMsgLen 获取 tcp 消息长度
-func (msg *TcpMsg) GetMsgLen() uint32 {
-	return msg.MsgLen
+// GetLen 获取 tcp 消息长度
+func (msg *TcpMsg) GetLen() uint32 {
+	return msg.Len
 }
 
-// GetMsgId 获取 tcp 消息 id
-func (msg *TcpMsg) GetMsgId() uint32 {
-	return msg.MsgId
+// GetId 获取 tcp 消息 id
+func (msg *TcpMsg) GetId() uint32 {
+	return msg.Id
 }
 
-// GetMsgData 获取 tcp 消息数据
-func (msg *TcpMsg) GetMsgData() []byte {
-	return msg.MsgData
+// GetData 获取 tcp 消息数据
+func (msg *TcpMsg) GetData() []byte {
+	return msg.Data
 }
 
-// SetMsgLen 设置 tcp 消息长度
-func (msg *TcpMsg) SetMsgLen(msgLen uint32) {
-	msg.MsgLen = msgLen
+// SetLen 设置 tcp 消息长度
+func (msg *TcpMsg) SetLen(len uint32) {
+	msg.Len = len
 }
 
-// SetMsgId 设置 tcp 消息 id
-func (msg *TcpMsg) SetMsgId(msgId uint32) {
-	msg.MsgId = msgId
+// SetId 设置 tcp 消息 id
+func (msg *TcpMsg) SetId(id uint32) {
+	msg.Id = id
 }
 
-// SetMsgData 设置 tcp 消息数据
-func (msg *TcpMsg) SetMsgData(msgData []byte) {
-	msg.MsgData = msgData
+// SetData 设置 tcp 消息数据
+func (msg *TcpMsg) SetData(data []byte) {
+	msg.Data = data
 }

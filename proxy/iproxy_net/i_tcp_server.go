@@ -11,6 +11,6 @@ type ITcpServer interface {
 	// Stop 停止 tcp 服务器
 	Stop()
 
-	// SetMidware 设置 tcp 服务中间件
-	SetMidware(midware ITcpBaseMidware)
+	// SetMidWare 设置 tcp 服务中间件
+	SetMidWare(midWare ITcpBaseMidWare)
 }

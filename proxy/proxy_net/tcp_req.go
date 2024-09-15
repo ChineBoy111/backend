@@ -7,10 +7,12 @@ type TcpReq struct {
 	Packet []byte
 }
 
-func (req *TcpReq) GetTcpConn() iproxy_net.ITcpConn {
+// GetConn 获取 tcpConn 对象
+func (req *TcpReq) GetConn() iproxy_net.ITcpConn {
 	return req.Conn
 }
 
+// GetPacket 获取收到的 tcp 数据包
 func (req *TcpReq) GetPacket() []byte {
 	return req.Packet
 }

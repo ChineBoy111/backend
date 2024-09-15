@@ -9,8 +9,8 @@ type ITcpConn interface {
 	// Stop 停止 tcp 连接
 	Stop()
 
-	// GetConnId 获取 tcp 连接 id
-	GetConnId() uint32
+	// GetId 获取 tcp 连接 id
+	GetId() uint32
 
 	// GetRemoteAddr 获取客户端的 ip 地址和端口
 	GetRemoteAddr() net.Addr

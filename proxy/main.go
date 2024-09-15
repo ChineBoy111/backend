@@ -7,18 +7,18 @@ import (
 )
 
 type PingMiddleware struct {
-	proxy_net.TcpBaseMidware
+	proxy_net.TcpBaseMidWare
 }
 
 func (middleware *PingMiddleware) Handler(request iproxy_net.ITcpReq) {
-	_ /* writeBytes */, err := request.GetTcpConn().GetSocket().Write([]byte("ping"))
+	_ /* writeBytes */, err := request.GetConn().GetSocket().Write([]byte("ping"))
 	if err != nil {
-		log.Println(err)
+		log.Println("Write err:", err.Error())
 	}
 }
 
 func main() {
 	server := proxy_net.NewTcpServer()
-	server.SetMidware(&PingMiddleware{})
+	server.SetMidWare(&PingMiddleware{})
 	server.Serve()
 }
