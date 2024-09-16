@@ -1,5 +1,6 @@
 package inetwork
 
+// ITcpMsg tcp 消息
 type ITcpMsg interface {
 	// GetLen 获取 tcp 消息长度
 	GetLen() uint32

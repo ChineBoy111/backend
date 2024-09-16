@@ -1,7 +1,8 @@
 package inetwork
 
+// ITcpReq 封装 tcp 连接和 tcp 消息的 tcp 请求
 type ITcpReq interface {
-	// GetConn 获取 TcpConn 结构体变量
+	// GetConn 获取 tcp 连接
 	GetConn() ITcpConn
 
 	// GetMsgLen 获取 tcp 消息的长度

@@ -8,23 +8,23 @@ import (
 	"net"
 )
 
-// TcpConn 实现 ITcpConn 接口
+// TcpConn tcp 连接
 type TcpConn struct {
-	Closed   chan struct{}        // 通知 tcp 连接已关闭的通道
-	Id       uint32               // tcp 连接 id
-	MidWare  inetwork.ITcpMidWare // tcp 消息中间件
-	Socket   *net.TCPConn         // tcp 套接字
-	isClosed bool                 // tcp 连接是否已关闭
+	Closed     chan struct{}           // 通知 tcp 连接已关闭的 chan
+	Id         uint32                  // tcp 连接 id
+	MidWareMan inetwork.ITcpMidWareMan // 负责 tcp 消息绑定中间件、tcp 请求中的 tcp 消息使用中间件
+	Socket     *net.TCPConn            // tcp 套接字
+	isClosed   bool                    // tcp 连接是否已关闭
 }
 
-// NewTcpConn 创建 TcpConn 结构体变量
-func NewTcpConn(socket *net.TCPConn, id uint32, midWare inetwork.ITcpMidWare) *TcpConn {
+// NewTcpConn 创建 tcp 连接变量
+func NewTcpConn(socket *net.TCPConn, id uint32, midWareMan inetwork.ITcpMidWareMan) *TcpConn {
 	conn := &TcpConn{
-		Closed:   make(chan struct{}, 1),
-		Id:       id,
-		MidWare:  midWare,
-		Socket:   socket,
-		isClosed: false,
+		Closed:     make(chan struct{}, 1), // 通知 tcp 连接已关闭的 chan
+		Id:         id,                     // tcp 连接 id
+		MidWareMan: midWareMan,             // 负责 tcp 消息绑定中间件、tcp 请求中的 tcp 消息使用中间件
+		Socket:     socket,                 // tcp 套接字
+		isClosed:   false,                  // tcp 连接是否已关闭
 	}
 	return conn
 }
@@ -75,12 +75,8 @@ func (conn *TcpConn) StartReader() {
 			Conn: conn,
 			Msg:  msg,
 		}
-		// 使用 tcp 消息中间件的 goroutine，处理拆包得到的 tcp 消息
-		go func(req inetwork.ITcpReq) {
-			conn.MidWare.PreHandler(req)
-			conn.MidWare.MsgHandler(req)
-			conn.MidWare.PostHandler(req)
-		}(&req)
+		//! 使用 tcp 消息中间件的 goroutine，处理拆包得到的 tcp 消息
+		go conn.MidWareMan.UseMidWare(&req)
 	}
 }
 
@@ -119,7 +115,7 @@ func (conn *TcpConn) SendPac(msgId uint32, msgData []byte) error {
 		return errors.New("conn is closed")
 	}
 	// 封包，将 msg 结构体变量序列化为 packet 字节数组（tcp 消息 -> tcp 数据包）
-	pac, err := pacMan.Pack(NewTcpMsg(msgId, msgData))
+	pac, err := NewTcpPacMan().Pack(NewTcpMsg(msgId, msgData))
 	if err != nil {
 		log.Println("Pack err", err.Error())
 		return err

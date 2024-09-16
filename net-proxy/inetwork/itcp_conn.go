@@ -2,6 +2,7 @@ package inetwork
 
 import "net"
 
+// ITcpConn tcp 连接
 type ITcpConn interface {
 	// Start 启动 tcp 连接
 	Start()

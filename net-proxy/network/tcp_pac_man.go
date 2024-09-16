@@ -8,19 +8,13 @@ import (
 	"errors"
 )
 
+// TcpPacMan 负责 tcp 消息序列化为 tcp 数据包、tcp 数据包反序列化为 tcp 消息
 type TcpPacMan struct {
 }
 
-var pacMan *TcpPacMan
-
-// ! init 函数只执行 1 次
-func init() {
-	pacMan = &TcpPacMan{}
-}
-
-// NewTcpPacMan 创建 TcpPacMan 结构体变量
+// NewTcpPacMan 创建 TcpPacMan 结构体变量，多例
 func NewTcpPacMan() *TcpPacMan {
-	return pacMan
+	return &TcpPacMan{}
 }
 
 // GetHeadLen 获取 tcp 数据包的 head 长度
@@ -28,7 +22,8 @@ func (pacMan *TcpPacMan) GetHeadLen() uint32 {
 	return 8 // 4 bytes (Id uint32) + 4 bytes (Len uint32) = 8 bytes
 }
 
-// Pack 封包，将 msg 结构体变量序列化为 packet 字节数组（tcp 消息 -> tcp 数据包）
+// Pack 封包，tcp 消息 序列化为 tcp 数据包
+// 将 msg 结构体变量序列化为 packet 字节数组
 func (pacMan *TcpPacMan) Pack(msg inetwork.ITcpMsg) ([]byte, error) {
 	buf /* writer */ := bytes.NewBuffer([]byte{})
 	// 向 buf 中 写入 msgLen
@@ -47,7 +42,8 @@ func (pacMan *TcpPacMan) Pack(msg inetwork.ITcpMsg) ([]byte, error) {
 	return pac, nil
 }
 
-// Unpack 拆包，将 packet 字节数组反序列化为 msg 结构体变量（tcp 数据包 -> tcp 消息）
+// Unpack 拆包，即 tcp 数据包反序列化为 tcp 消息
+// 将 packet 字节数组反序列化为 msg 结构体变量
 func (pacMan *TcpPacMan) Unpack(pac []byte) (inetwork.ITcpMsg, error) {
 	reader := bytes.NewReader(pac)
 	msg := &TcpMsg{}

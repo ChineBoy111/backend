@@ -8,28 +8,27 @@ import (
 	"net"
 )
 
-// TcpServer 实现 ITcpServer 接口
+// TcpServer tcp 服务器
 type TcpServer struct {
-	Proto   string               // 协议
-	HostIp  string               // 监听 HostIp 的 tcp 连接请求
-	Port    int                  // 监听的端口
-	MidWare inetwork.ITcpMidWare // tcp 消息中间件
+	Proto      string                  // 协议
+	HostIp     string                  // 监听 HostIp 的 tcp 连接请求
+	Port       int                     // 监听的 tcp 端口
+	MidWareMan inetwork.ITcpMidWareMan // 负责 tcp 消息绑定中间件、tcp 请求中的 tcp 消息使用中间件
 }
 
 // Start 启动 tcp 服务器
 func (server *TcpServer) Start() {
-	log.Printf("Start server %v, ver %v\n", utils.Global.Name, utils.Global.Ver)
+	log.Printf("Start server %v, v%v\n", utils.Global.Name, utils.Global.Ver)
 	log.Println("Copyright (c) bronya.com")
 	log.Println("All rights reserved")
 	go func() { //! 监听 HostIp 的 tcp 连接请求的 goroutine
-
 		//! 解析 tcp 地址
+		// 0.0.0.0:8080 监听所有 ip 的主机到本机 8080 端口的 tcp 连接请求
 		tcpAddr, err := net.ResolveTCPAddr(server.Proto, fmt.Sprintf("%v:%v", server.HostIp, server.Port))
 		if err != nil {
 			log.Println("Resolve tcp addr err", err.Error())
 			return
 		}
-
 		//! 监听 HostIp 的 tcp 连接请求
 		tcpListener, err := net.ListenTCP(server.Proto, tcpAddr)
 		if err != nil {
@@ -46,11 +45,8 @@ func (server *TcpServer) Start() {
 				log.Println("Accept tcp err", err.Error())
 				continue
 			}
-
-			//! 已建立连接的 tcpConn
-			tcpConn := NewTcpConn(conn, id, server.MidWare)
+			tcpConn := NewTcpConn(conn, id, server.MidWareMan)
 			id++
-
 			go tcpConn.Start() //! 处理 tcp 连接的 goroutine
 		}
 	}()
@@ -58,7 +54,7 @@ func (server *TcpServer) Start() {
 
 // Serve 运行 tcp 服务
 func (server *TcpServer) Serve() {
-	//! 启动 tcp 服务器，运行服务
+	//! 启动 tcp 服务器，运行 tcp 服务
 	server.Start()
 	select {} //todo 阻塞等待
 }
@@ -68,18 +64,18 @@ func (server *TcpServer) Stop() {
 	//TODO
 }
 
-// SetMidWare 设置 tcp 消息中间件
-func (server *TcpServer) SetMidWare(middleware inetwork.ITcpMidWare) {
-	server.MidWare = middleware
+// BindMidWare tcp 消息绑定中间件
+func (server *TcpServer) BindMidWare(msgId uint32, midWare inetwork.ITcpMidWare) {
+	server.MidWareMan.BindMidWare(msgId, midWare) // tcp 消息绑定中间件
 }
 
 // NewTcpServer 创建 tcp 服务器
 func NewTcpServer() inetwork.ITcpServer {
 	server := TcpServer{
-		Proto:   utils.Global.Proto,  // 协议
-		HostIp:  utils.Global.HostIp, // 监听 HostIp 的 tcp 连接请求
-		Port:    utils.Global.Port,   // 监听的 tcp 端口
-		MidWare: nil,
+		Proto:      utils.Global.Proto,  // 协议
+		HostIp:     utils.Global.HostIp, // 监听 HostIp 的 tcp 连接请求
+		Port:       utils.Global.Port,   // 监听的 tcp 端口
+		MidWareMan: NewTcpMidWareMan(),  // 负责 tcp 消息绑定中间件、tcp 请求中的 tcp 消息使用中间件
 	}
 	return &server
 }

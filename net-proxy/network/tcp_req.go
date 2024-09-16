@@ -2,12 +2,13 @@ package network
 
 import "bronya.com/net-proxy/inetwork"
 
+// TcpReq 封装 tcp 连接和 tcp 消息的 tcp 请求
 type TcpReq struct {
-	Conn inetwork.ITcpConn
-	Msg  inetwork.ITcpMsg
+	Conn inetwork.ITcpConn // tcp 连接
+	Msg  inetwork.ITcpMsg  // tcp 消息
 }
 
-// GetConn 获取 TcpConn 结构体变量
+// GetConn 获取 tcp 连接
 func (req *TcpReq) GetConn() inetwork.ITcpConn {
 	return req.Conn
 }

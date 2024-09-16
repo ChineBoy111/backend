@@ -1,6 +1,6 @@
 package inetwork
 
-// ITcpServer tcp 服务器接口
+// ITcpServer tcp 服务器
 type ITcpServer interface {
 	// Start 启动 tcp 服务器
 	Start()
@@ -11,6 +11,6 @@ type ITcpServer interface {
 	// Stop 停止 tcp 服务器
 	Stop()
 
-	// SetMidWare 设置 tcp 消息中间件
-	SetMidWare(midWare ITcpMidWare)
+	// BindMidWare tcp 消息绑定中间件
+	BindMidWare(msgId uint32, midWare ITcpMidWare)
 }

@@ -1,6 +1,6 @@
 {
   "Name": "WanProxy",
-  "Ver": "v0.5",
+  "Ver": "1.6",
   "HostIp": "0.0.0.0",
   "Port": 3300,
   "Proto": "tcp4",

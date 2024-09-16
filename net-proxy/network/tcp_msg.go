@@ -1,5 +1,6 @@
 package network
 
+// TcpMsg tcp 消息
 type TcpMsg struct {
 	Len  uint32
 	Id   uint32
@@ -36,7 +37,7 @@ func (msg *TcpMsg) SetData(data []byte) {
 	msg.Data = data
 }
 
-// NewTcpMsg 创建 tcp 消息
+// NewTcpMsg 创建 tcp 消息，多例
 func NewTcpMsg(id uint32, data []byte) *TcpMsg {
 	return &TcpMsg{
 		Len:  uint32(len(data)),

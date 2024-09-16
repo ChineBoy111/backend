@@ -4,10 +4,11 @@ import (
 	"bronya.com/net-proxy/inetwork"
 )
 
+// TcpBaseMidWare tcp 基础中间件
 type TcpBaseMidWare struct {
 }
 
-// PreHandler Handler 前的 hook 方法
+// PreHandler MsgHandler 前的 hook 方法
 func (midWare *TcpBaseMidWare) PreHandler(inetwork.ITcpReq) {
 }
 
@@ -15,6 +16,6 @@ func (midWare *TcpBaseMidWare) PreHandler(inetwork.ITcpReq) {
 func (midWare *TcpBaseMidWare) MsgHandler(inetwork.ITcpReq) {
 }
 
-// PostHandler Handler 后的 hook 方法
+// PostHandler MsgHandler 后的 hook 方法
 func (midWare *TcpBaseMidWare) PostHandler(inetwork.ITcpReq) {
 }
